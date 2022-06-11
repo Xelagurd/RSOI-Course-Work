@@ -1,4 +1,4 @@
-package com.example.rsoi_course_work.scooter_service.exception;
+package com.example.rsoi_course_work.session_service.exception;
 
 import java.util.Date;
 

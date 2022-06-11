@@ -1,4 +1,4 @@
-package com.example.rsoi_course_work.scooter_service.exception;
+package com.example.rsoi_course_work.session_service.exception;
 
 public class ErrorResponse extends RuntimeException {
 
