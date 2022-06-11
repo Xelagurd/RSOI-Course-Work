@@ -1,0 +1,5 @@
+-- file: 10-create-user-and-db.sql
+CREATE DATABASE services;
+CREATE ROLE role2 WITH PASSWORD '123456';
+GRANT ALL PRIVILEGES ON DATABASE services TO role2;
+ALTER ROLE role2 WITH LOGIN;
