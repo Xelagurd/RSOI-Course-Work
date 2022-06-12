@@ -508,7 +508,7 @@ public class GatewayService {
                 newQueueRequest.setCancelUserRental(userResponseEntity.getBody().getUser_uid(), rentalUid);
 
                 queueService.putRequestInQueue(newQueueRequest);
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(HttpStatus.OK);
             }
 
             if (responseEntity.getStatusCode() != HttpStatus.NOT_FOUND) {
@@ -531,7 +531,7 @@ public class GatewayService {
                 }
             }
 
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
 
         return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
@@ -549,7 +549,7 @@ public class GatewayService {
                 newQueueRequest.setFinishUserRental(userResponseEntity.getBody().getUser_uid(), rentalUid);
 
                 queueService.putRequestInQueue(newQueueRequest);
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(HttpStatus.OK);
             }
 
             if (responseEntity.getStatusCode() != HttpStatus.NOT_FOUND) {
@@ -624,7 +624,7 @@ public class GatewayService {
                 }
             }
 
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
 
         return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
