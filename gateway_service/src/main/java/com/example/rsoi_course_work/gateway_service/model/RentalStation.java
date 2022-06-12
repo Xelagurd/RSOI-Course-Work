@@ -1,21 +1,11 @@
-package com.example.rsoi_course_work.station_service.model;
+package com.example.rsoi_course_work.gateway_service.model;
 
-import javax.persistence.*;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity
-@Table(name = "rental_stations", schema = "located_scooters")
 public class RentalStation {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "serial")
     private Long id;
-
-    @Column(nullable = false, unique = true)
     private UUID rental_station_uid;
-
-    @Column(nullable = false, unique = true, length = 160)
     private String location;
 
     public RentalStation() {
@@ -30,6 +20,10 @@ public class RentalStation {
     public RentalStation(UUID rental_station_uid, String location) {
         this.rental_station_uid = rental_station_uid;
         this.location = location;
+    }
+
+    public RentalStationInfo getInfo() {
+        return new RentalStationInfo(rental_station_uid, location);
     }
 
     public Long getId() {

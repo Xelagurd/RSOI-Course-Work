@@ -2,6 +2,7 @@ package com.example.rsoi_course_work.station_service;
 
 import com.example.rsoi_course_work.station_service.model.LocatedScooter;
 import com.example.rsoi_course_work.station_service.model.LocatedScooterPartialList;
+import com.example.rsoi_course_work.station_service.model.RentalStation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,12 @@ public class StationController {
 
     @PatchMapping("/located-scooters/{locatedScooterUid}")
     public ResponseEntity<HttpStatus> updateLocatedScooterReserve(@PathVariable("locatedScooterUid") UUID locatedScooterUid,
-                                                       @RequestParam Boolean availability) {
+                                                                  @RequestParam Boolean availability) {
         return stationService.updateLocatedScooterReserve(locatedScooterUid, availability);
+    }
+
+    @GetMapping("/rental-stations/{rentalStationUid}")
+    public ResponseEntity<RentalStation> getRentalStation(@PathVariable("rentalStationUid") UUID rentalStationUid) {
+        return stationService.getRentalStation(rentalStationUid);
     }
 }

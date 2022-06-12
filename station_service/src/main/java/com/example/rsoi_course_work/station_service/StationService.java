@@ -3,9 +3,12 @@ package com.example.rsoi_course_work.station_service;
 import com.example.rsoi_course_work.station_service.exception.ErrorResponse;
 import com.example.rsoi_course_work.station_service.model.LocatedScooter;
 import com.example.rsoi_course_work.station_service.model.LocatedScooterPartialList;
+import com.example.rsoi_course_work.station_service.model.RentalStation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -60,5 +63,12 @@ public class StationService {
         locatedScooterRepository.save(locatedScooter);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public ResponseEntity<RentalStation> getRentalStation(UUID rentalStationUid) {
+        RentalStation rentalStation = rentalStationRepository.findByRental_station_uid(rentalStationUid).orElseThrow(() ->
+                new ErrorResponse("Not found rental station for UID"));
+
+        return new ResponseEntity<>(rentalStation, HttpStatus.OK);
     }
 }

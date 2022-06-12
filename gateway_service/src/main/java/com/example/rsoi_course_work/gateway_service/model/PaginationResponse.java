@@ -7,9 +7,9 @@ public class PaginationResponse {
     private Integer page;
     private Integer pageSize;
     private Integer totalElements;
-    private List<ScooterResponse> items;
+    private List<LocatedScooterInfo> items;
 
-    public PaginationResponse(Integer page, Integer pageSize, Integer totalElements, List<ScooterResponse> items) {
+    public PaginationResponse(Integer page, Integer pageSize, Integer totalElements, List<LocatedScooterInfo> items) {
         this.page = page;
         this.pageSize = pageSize;
         this.totalElements = totalElements;
@@ -40,11 +40,11 @@ public class PaginationResponse {
         this.totalElements = totalElements;
     }
 
-    public List<ScooterResponse> getItems() {
+    public List<LocatedScooterInfo> getItems() {
         return items;
     }
 
-    public void setItems(List<ScooterResponse> items) {
+    public void setItems(List<LocatedScooterInfo> items) {
         this.items = items;
     }
 

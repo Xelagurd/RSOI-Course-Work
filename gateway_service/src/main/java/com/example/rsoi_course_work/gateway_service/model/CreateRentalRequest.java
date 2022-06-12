@@ -5,87 +5,87 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class CreateRentalRequest {
-    private UUID scooterUid;
-    private Date dateFrom;
-    private Date dateTo;
+    private UUID located_scooter_uid;
+    private UUID return_to;
+    private Date date_from;
+    private Date date_to;
 
     public CreateRentalRequest() {
-
     }
 
-    public CreateRentalRequest(UUID scooterUid, Date dateFrom, Date dateTo) {
-        this.scooterUid = scooterUid;
-        this.dateFrom = dateFrom;
-        this.dateTo = dateTo;
+    public CreateRentalRequest(UUID located_scooter_uid, UUID return_to, Date date_from, Date date_to) {
+        this.located_scooter_uid = located_scooter_uid;
+        this.return_to = return_to;
+        this.date_from = date_from;
+        this.date_to = date_to;
     }
 
-    public static String getString(Date dateFrom) {
-        String date = (dateFrom.getYear() + 1900) + "-";
-        date += ((dateFrom.getMonth() + 1) > 9 ? (dateFrom.getMonth() + 1) :
-                "0" + (dateFrom.getMonth() + 1)) + "-";
-        date += dateFrom.getDate() > 9 ? dateFrom.getDate() :
-                "0" + dateFrom.getDate();
-        return date;
+    public boolean isValid() {
+        return located_scooter_uid != null && return_to != null && date_from != null && date_to != null;
     }
 
-    public UUID getScooterUid() {
-        return scooterUid;
+    public UUID getLocated_scooter_uid() {
+        return located_scooter_uid;
     }
 
-    public void setScooterUid(UUID scooterUid) {
-        this.scooterUid = scooterUid;
+    public void setLocated_scooter_uid(UUID located_scooter_uid) {
+        this.located_scooter_uid = located_scooter_uid;
     }
 
-    public Date getDateFrom() {
-        return dateFrom;
+    public UUID getReturn_to() {
+        return return_to;
     }
 
-    public void setDateFrom(Date dateFrom) {
-        this.dateFrom = dateFrom;
+    public void setReturn_to(UUID return_to) {
+        this.return_to = return_to;
     }
 
-    public String getDateFromString() {
-        return getString(dateFrom);
+    public Date getDate_from() {
+        return date_from;
     }
 
-    public Date getDateTo() {
-        return dateTo;
+    public void setDate_from(Date date_from) {
+        this.date_from = date_from;
     }
 
-    public void setDateTo(Date dateTo) {
-        this.dateTo = dateTo;
+    public Date getDate_to() {
+        return date_to;
     }
 
-    public String getDateToString() {
-        return getString(dateTo);
+    public void setDate_to(Date date_to) {
+        this.date_to = date_to;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof CreateRentalRequest)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         CreateRentalRequest that = (CreateRentalRequest) o;
 
-        if (!Objects.equals(scooterUid, that.scooterUid)) return false;
-        if (!Objects.equals(dateFrom, that.dateFrom)) return false;
-        return Objects.equals(dateTo, that.dateTo);
+        if (!Objects.equals(located_scooter_uid, that.located_scooter_uid))
+            return false;
+        if (!Objects.equals(return_to, that.return_to)) return false;
+        if (!Objects.equals(date_from, that.date_from)) return false;
+        return Objects.equals(date_to, that.date_to);
     }
 
     @Override
     public int hashCode() {
-        int result = scooterUid != null ? scooterUid.hashCode() : 0;
-        result = 31 * result + (dateFrom != null ? dateFrom.hashCode() : 0);
-        result = 31 * result + (dateTo != null ? dateTo.hashCode() : 0);
+        int result = located_scooter_uid != null ? located_scooter_uid.hashCode() : 0;
+        result = 31 * result + (return_to != null ? return_to.hashCode() : 0);
+        result = 31 * result + (date_from != null ? date_from.hashCode() : 0);
+        result = 31 * result + (date_to != null ? date_to.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
         return "CreateRentalRequest{" +
-                "scooterUid=" + scooterUid +
-                ", dateFrom=" + dateFrom +
-                ", date_to=" + dateTo +
+                "located_scooter_uid=" + located_scooter_uid +
+                ", return_to=" + return_to +
+                ", date_from=" + date_from +
+                ", date_to=" + date_to +
                 '}';
     }
 }

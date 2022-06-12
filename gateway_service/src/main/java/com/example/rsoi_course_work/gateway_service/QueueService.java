@@ -1,9 +1,9 @@
 package com.example.rsoi_course_work.gateway_service;
 
-import com.example.rsoi_course_work.gateway_service.model.PairOfScooterUidAndPaymentUid;
-import com.example.rsoi_course_work.gateway_service.proxy.ScooterServiceProxy;
+import com.example.rsoi_course_work.gateway_service.model.PairOfLocatedScooterUidAndPaymentUid;
 import com.example.rsoi_course_work.gateway_service.proxy.PaymentServiceProxy;
 import com.example.rsoi_course_work.gateway_service.proxy.RentalServiceProxy;
+import com.example.rsoi_course_work.gateway_service.proxy.StationServiceProxy;
 import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +17,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class QueueService {
     private static BlockingQueue<QueueRequest> eventQueue = null;
 
-    private final ScooterServiceProxy scooterServiceProxy;
+    private final StationServiceProxy stationServiceProxy;
     private final RentalServiceProxy rentalServiceProxy;
     private final PaymentServiceProxy paymentServiceProxy;
 
-    public QueueService(ScooterServiceProxy scooterServiceProxy, RentalServiceProxy rentalServiceProxy,
+    public QueueService(StationServiceProxy stationServiceProxy, RentalServiceProxy rentalServiceProxy,
                         PaymentServiceProxy paymentServiceProxy) {
-        this.scooterServiceProxy = scooterServiceProxy;
+        this.stationServiceProxy = stationServiceProxy;
         this.rentalServiceProxy = rentalServiceProxy;
         this.paymentServiceProxy = paymentServiceProxy;
     }
@@ -55,17 +55,17 @@ public class QueueService {
                     queueRequest = eventQueue.take();
                     switch (queueRequest.getQueueRequestType()) {
                         case CANCEL_USER_RENTAL:
-                            ResponseEntity<PairOfScooterUidAndPaymentUid> responseEntity = new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+                            ResponseEntity<PairOfLocatedScooterUidAndPaymentUid> responseEntity = new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
                             try {
                                 responseEntity = rentalServiceProxy.
-                                        cancelUserRental(queueRequest.getUsername(), queueRequest.getRentalUid());
+                                        cancelUserRental(queueRequest.getUserUid(), queueRequest.getRentalUid());
                             } catch (FeignException e) {
                                 QueueService.this.putRequestInQueue(queueRequest);
                             }
 
                             if (responseEntity.getStatusCode() != HttpStatus.NOT_FOUND) {
                                 try {
-                                    scooterServiceProxy.updateScooterReserve(responseEntity.getBody().getScooterUid(), true);
+                                    stationServiceProxy.updateLocatedScooterReserve(responseEntity.getBody().getLocatedScooterUid(), true);
                                 } catch (FeignException e) {
                                     QueueService.this.putRequestInQueue(queueRequest);
                                 }
@@ -81,14 +81,14 @@ public class QueueService {
                             ResponseEntity<UUID> responseEntity2 = new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
                             try {
                                 responseEntity2 = rentalServiceProxy.
-                                        finishUserRental(queueRequest.getUsername(), queueRequest.getRentalUid());
+                                        finishUserRental(queueRequest.getUserUid(), queueRequest.getRentalUid());
                             } catch (FeignException e) {
                                 QueueService.this.putRequestInQueue(queueRequest);
                             }
 
                             if (responseEntity2.getStatusCode() != HttpStatus.NOT_FOUND) {
                                 try {
-                                    scooterServiceProxy.updateScooterReserve(responseEntity2.getBody(), true);
+                                    stationServiceProxy.updateLocatedScooterReserve(responseEntity2.getBody(), true);
                                 } catch (FeignException e) {
                                     QueueService.this.putRequestInQueue(queueRequest);
                                 }
@@ -96,7 +96,7 @@ public class QueueService {
                             break;
                         case UPDATE_SCOOTER_RESERVE:
                             try {
-                                scooterServiceProxy.updateScooterReserve(queueRequest.getScooterUid(), queueRequest.isAvailability());
+                                stationServiceProxy.updateLocatedScooterReserve(queueRequest.getLocatedScooterUid(), queueRequest.isAvailability());
                             } catch (FeignException e) {
                                 QueueService.this.putRequestInQueue(queueRequest);
                             }

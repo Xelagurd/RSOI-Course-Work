@@ -1,16 +1,9 @@
 package com.example.rsoi_course_work.gateway_service;
 
-import com.auth0.jwt.JWT;
-import com.example.rsoi_course_work.gateway_service.model.CreateRentalRequest;
-import com.example.rsoi_course_work.gateway_service.model.CreateRentalResponse;
-import com.example.rsoi_course_work.gateway_service.model.PaginationResponse;
-import com.example.rsoi_course_work.gateway_service.model.RentalResponse;
-import com.example.rsoi_course_work.gateway_service.security.TokenResponse;
+import com.example.rsoi_course_work.gateway_service.model.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,75 +17,83 @@ public class GatewayController {
         this.gatewayService = gatewayService;
     }
 
-    @GetMapping("/scooters")
-    public ResponseEntity<PaginationResponse> getScooters(@RequestParam(required = false) Integer page,
-                                                      @RequestParam(required = false) Integer size,
-                                                      @RequestParam(required = false) Boolean showAll) {
-        String bearerToken = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization");
-        if (bearerToken != null) {
-            return gatewayService.getScooters(page, size, showAll);
-        } else
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+    @GetMapping("/user")
+    public ResponseEntity<UserInfo> getCurrentUser(@RequestHeader("Authorization") String jwt) {
+        return gatewayService.getCurrentUser(jwt);
     }
 
-    @GetMapping("/rental")
-    public ResponseEntity<List<RentalResponse>> getUserRentals() {
-        String bearerToken = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization");
-        if (bearerToken != null) {
-            String username = JWT.decode(bearerToken.substring(7)).getClaims().get("preferred_username").asString();
-            return gatewayService.getUserRentals(username);
-        } else
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+    //TODO: админские права
+    @PostMapping("/scooters")
+    public ResponseEntity<CreateScooterResponse> createScooter(@RequestHeader("Authorization") String jwt,
+                                                               @RequestBody CreateScooterRequest createScooterRequest) {
+        return gatewayService.createScooter(jwt, createScooterRequest);
     }
 
-    @GetMapping("/rental/{rentalUid}")
-    public ResponseEntity<RentalResponse> getUserRental(@PathVariable("rentalUid") UUID rentalUid) {
-        String bearerToken = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization");
-        if (bearerToken != null) {
-            String username = JWT.decode(bearerToken.substring(7)).getClaims().get("preferred_username").asString();
-            return gatewayService.getUserRental(username, rentalUid);
-        } else
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+    @DeleteMapping("/scooters/{scooterUid}")
+    public ResponseEntity<HttpStatus> removeScooter(@RequestHeader("Authorization") String jwt,
+                                                    @PathVariable("scooterUid") UUID scooterUid) {
+        return gatewayService.removeScooter(jwt, scooterUid);
     }
 
-    @DeleteMapping("/rental/{rentalUid}")
-    public ResponseEntity<HttpStatus> cancelUserRentalAndPaymentAndUnReserveScooter(@PathVariable("rentalUid") UUID rentalUid) {
-        String bearerToken = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization");
-        if (bearerToken != null) {
-            String username = JWT.decode(bearerToken.substring(7)).getClaims().get("preferred_username").asString();
-            return gatewayService.cancelUserRentalAndPaymentAndUnReserveScooter(username, rentalUid);
-        } else
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+    @PostMapping("/rental-stations")
+    public ResponseEntity<CreateRentalStationResponse> createRentalStation(@RequestHeader("Authorization") String jwt,
+                                                                           @RequestBody CreateRentalStationRequest createRentalStationRequest) {
+        return gatewayService.createRentalStation(jwt, createRentalStationRequest);
     }
 
-    @PostMapping("/rental/{rentalUid}/finish")
-    public ResponseEntity<HttpStatus> finishUserRentalAndUnReserveScooter(@PathVariable("rentalUid") UUID rentalUid) {
-        String bearerToken = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization");
-        if (bearerToken != null) {
-            String username = JWT.decode(bearerToken.substring(7)).getClaims().get("preferred_username").asString();
-            return gatewayService.finishUserRentalAndUnReserveScooter(username, rentalUid);
-        } else
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+    @DeleteMapping("/rental-stations/{rentalStationUid}")
+    public ResponseEntity<HttpStatus> removeRentalStation(@RequestHeader("Authorization") String jwt,
+                                                          @PathVariable("rentalStationUid") UUID rentalStationUid) {
+        return gatewayService.removeRentalStation(jwt, rentalStationUid);
     }
 
-    @PostMapping("/rental")
-    public ResponseEntity<CreateRentalResponse> reserveUserScooterAndCreateRentalAndPayment(@RequestBody CreateRentalRequest createRentalRequest) {
-        String bearerToken = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization");
-        if (bearerToken != null) {
-            String username = JWT.decode(bearerToken.substring(7)).getClaims().get("preferred_username").asString();
-            return gatewayService.reserveUserScooterAndCreateRentalAndPayment(username, createRentalRequest);
-        } else
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+    @PostMapping("/located-scooters")
+    public ResponseEntity<CreateLocatedScooterResponse> createLocatedScooter(@RequestHeader("Authorization") String jwt,
+                                                                             @RequestBody CreateLocatedScooterRequest createLocatedScooterRequest) {
+        return gatewayService.createLocatedScooter(jwt, createLocatedScooterRequest);
     }
 
-    @GetMapping("/authorization")
-    public ResponseEntity<String> requestAuthorizationCode() {
-        return gatewayService.requestAuthorizationCode();
+    @DeleteMapping("/located-scooters/{locatedScooterUid}")
+    public ResponseEntity<HttpStatus> removeLocatedScooter(@RequestHeader("Authorization") String jwt,
+                                                           @PathVariable("locatedScooterUid") UUID locatedScooterUid) {
+        return gatewayService.removeLocatedScooter(jwt, locatedScooterUid);
     }
 
-    @GetMapping("/callback")
-    public ResponseEntity<TokenResponse> authorizationCodeCallback(@RequestParam String code,
-                                                                   @RequestParam String state) {
-        return gatewayService.authorizationCodeCallback(code, state);
+    //TODO: добавить сортировку
+    @GetMapping("/located-scooters")
+    public ResponseEntity<PaginationResponse> getLocatedScooters(@RequestHeader("Authorization") String jwt,
+                                                                 @RequestParam(required = false) Integer page,
+                                                                 @RequestParam(required = false) Integer size,
+                                                                 @RequestParam(required = false) Boolean showAll) {
+        return gatewayService.getLocatedScooters(jwt, page, size, showAll);
+    }
+
+    @GetMapping("/rentals")
+    public ResponseEntity<List<RentalInfo>> getUserRentals(@RequestHeader("Authorization") String jwt) {
+        return gatewayService.getUserRentals(jwt);
+    }
+
+    @GetMapping("/rentals/{rentalUid}")
+    public ResponseEntity<RentalInfo> getUserRental(@RequestHeader("Authorization") String jwt,
+                                                    @PathVariable("rentalUid") UUID rentalUid) {
+        return gatewayService.getUserRental(jwt, rentalUid);
+    }
+
+    @DeleteMapping("/rentals/{rentalUid}")
+    public ResponseEntity<HttpStatus> cancelUserRentalAndPaymentAndUnReserveScooter(@RequestHeader("Authorization") String jwt,
+                                                                                    @PathVariable("rentalUid") UUID rentalUid) {
+        return gatewayService.cancelUserRentalAndPaymentAndUnReserveScooter(jwt, rentalUid);
+    }
+
+    @PostMapping("/rentals/{rentalUid}/finish")
+    public ResponseEntity<HttpStatus> finishUserRentalAndUnReserveScooter(@RequestHeader("Authorization") String jwt,
+                                                                          @PathVariable("rentalUid") UUID rentalUid) {
+        return gatewayService.finishUserRentalAndUnReserveScooter(jwt, rentalUid);
+    }
+
+    @PostMapping("/rentals")
+    public ResponseEntity<RentalInfo> reserveUserScooterAndCreateRentalAndPayment(@RequestHeader("Authorization") String jwt,
+                                                                                            @RequestBody CreateRentalRequest createRentalRequest) {
+        return gatewayService.reserveUserScooterAndCreateRentalAndPayment(jwt, createRentalRequest);
     }
 }

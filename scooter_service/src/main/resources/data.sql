@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS scooters.scooters
 (
     id          SERIAL PRIMARY KEY,
     scooter_uid uuid UNIQUE NOT NULL,
-    provider    VARCHAR(80) NOT NULL,
+    provider    VARCHAR(80) UNIQUE NOT NULL,
     max_speed   INT,
     price       INT         NOT NULL
 );

@@ -1,6 +1,5 @@
 package com.example.rsoi_course_work.station_service;
 
-import com.example.rsoi_course_work.station_service.model.LocatedScooter;
 import com.example.rsoi_course_work.station_service.model.RentalStation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,5 +11,5 @@ import java.util.UUID;
 @Repository
 public interface RentalStationRepository extends JpaRepository<RentalStation, Long> {
     @Query("select c from RentalStation c where c.rental_station_uid = ?1")
-    Optional<LocatedScooter> findByRental_station_uid(UUID rental_station_uid);
+    Optional<RentalStation> findByRental_station_uid(UUID rental_station_uid);
 }

@@ -15,7 +15,7 @@ public class Scooter {
     @Column(nullable = false, unique = true)
     private UUID scooter_uid;
 
-    @Column(nullable = false, length = 80)
+    @Column(nullable = false, unique = true, length = 80)
     private String provider;
 
     private Integer max_speed;

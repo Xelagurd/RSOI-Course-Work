@@ -2,7 +2,7 @@ package com.example.rsoi_course_work.gateway_service;
 
 import com.example.rsoi_course_work.gateway_service.exception.ErrorMessage;
 import com.example.rsoi_course_work.gateway_service.exception.FeignRetriesException;
-import com.example.rsoi_course_work.gateway_service.exception.ValidationErrorResponse;
+import com.example.rsoi_course_work.gateway_service.exception.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -14,9 +14,16 @@ import java.util.Date;
 @RestControllerAdvice
 public class GatewayControllerExceptionHandler {
 
-    @ExceptionHandler(ValidationErrorResponse.class)
+/*    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    public ErrorMessage unauthorizedException(UnauthorizedException ex, WebRequest request) {
+        return new ErrorMessage(HttpStatus.UNAUTHORIZED.value(), new Date(), ex.getMessage(),
+                request.getDescription(true));
+    }*/
+
+    @ExceptionHandler(ValidationException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorMessage validationErrorResponse(ValidationErrorResponse ex, WebRequest request) {
+    public ErrorMessage validationException(ValidationException ex, WebRequest request) {
         return new ErrorMessage(HttpStatus.BAD_REQUEST.value(), new Date(), ex.getMessage(),
                 request.getDescription(true));
     }

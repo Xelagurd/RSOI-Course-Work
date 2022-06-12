@@ -4,18 +4,18 @@ import java.util.UUID;
 
 public class QueueRequest {
     private QueueRequestType queueRequestType = null;
-    private String username = null;
+    private UUID userUid = null;
     private UUID rentalUid = null;
     private UUID paymentUid = null;
-    private UUID scooterUid = null;
+    private UUID locatedScooterUid = null;
     private Boolean availability = null;
 
     public QueueRequestType getQueueRequestType() {
         return queueRequestType;
     }
 
-    public String getUsername() {
-        return username;
+    public UUID getUserUid() {
+        return userUid;
     }
 
     public UUID getRentalUid() {
@@ -26,29 +26,29 @@ public class QueueRequest {
         return paymentUid;
     }
 
-    public UUID getScooterUid() {
-        return scooterUid;
+    public UUID getLocatedScooterUid() {
+        return locatedScooterUid;
     }
 
     public boolean isAvailability() {
         return availability;
     }
 
-    public void setCancelUserRental(String username, UUID rentalUid) {
+    public void setCancelUserRental(UUID userUid, UUID rentalUid) {
         this.queueRequestType = QueueRequestType.CANCEL_USER_RENTAL;
-        this.username = username;
+        this.userUid = userUid;
         this.rentalUid = rentalUid;
     }
 
-    public void setFinishUserRental(String username, UUID rentalUid) {
+    public void setFinishUserRental(UUID userUid, UUID rentalUid) {
         this.queueRequestType = QueueRequestType.FINISH_USER_RENTAL;
-        this.username = username;
+        this.userUid = userUid;
         this.rentalUid = rentalUid;
     }
 
-    public void setUpdateScooterReserve(UUID scooterUid, Boolean availability) {
+    public void setUpdateLocatedScooterReserve(UUID locatedScooterUid, Boolean availability) {
         this.queueRequestType = QueueRequestType.UPDATE_SCOOTER_RESERVE;
-        this.scooterUid = scooterUid;
+        this.locatedScooterUid = locatedScooterUid;
         this.availability = availability;
     }
 

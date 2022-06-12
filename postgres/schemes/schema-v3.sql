@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS scooters.scooters
 (
     id          SERIAL PRIMARY KEY,
     scooter_uid uuid UNIQUE NOT NULL,
-    provider    VARCHAR(80) NOT NULL,
+    provider    VARCHAR(80) UNIQUE NOT NULL,
     max_speed   INT,
     price       INT         NOT NULL
 );
@@ -33,7 +33,7 @@ CREATE SCHEMA IF NOT EXISTS located_scooters;
 CREATE TABLE IF NOT EXISTS located_scooters.located_scooters
 (
     id                    SERIAL PRIMARY KEY,
-    located_scooter_uid uuid UNIQUE NOT NULL,
+    located_scooter_uid   uuid UNIQUE NOT NULL,
     scooter_uid           uuid        NOT NULL,
     rental_station_uid    uuid        NOT NULL,
     registration_number   VARCHAR(20) NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS located_scooters.rental_stations
 (
     id                 SERIAL PRIMARY KEY,
     rental_station_uid uuid UNIQUE  NOT NULL,
-    location           VARCHAR(160) NOT NULL
+    location           VARCHAR(160) UNIQUE NOT NULL
 );
 INSERT INTO located_scooters.rental_stations (rental_station_uid, location)
 VALUES ('a5da7b5b-e6ba-4c33-a69d-4dccb07509ee', 'Москва, Бауманская, 1');
@@ -114,7 +114,7 @@ CREATE TABLE IF NOT EXISTS operations.operations
     date                  TIMESTAMP WITH TIME ZONE NOT NULL,
     user_uid              uuid                     NOT NULL,
     scooter_uid           uuid,
-    located_scooter_uid uuid,
+    located_scooter_uid   uuid,
     rental_station_uid    uuid,
     rental_uid            uuid,
     payment_uid           uuid

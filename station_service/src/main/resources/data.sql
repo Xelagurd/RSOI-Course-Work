@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS located_scooters.rental_stations
 (
     id                 SERIAL PRIMARY KEY,
     rental_station_uid uuid UNIQUE  NOT NULL,
-    location           VARCHAR(160) NOT NULL
+    location           VARCHAR(160) UNIQUE NOT NULL
 );
 INSERT INTO located_scooters.rental_stations (rental_station_uid, location)
 VALUES ('a5da7b5b-e6ba-4c33-a69d-4dccb07509ee', 'Москва, Бауманская, 1');
