@@ -1,9 +1,14 @@
-package com.example.rsoi_course_work.gateway_service.model;
+package com.example.rsoi_course_work.gateway_service.model.rental;
+
+import com.example.rsoi_course_work.gateway_service.model.located_scooter.LocatedScooterInfo;
+import com.example.rsoi_course_work.gateway_service.model.payment.PaymentInfo;
+import com.example.rsoi_course_work.gateway_service.model.rental_station.RentalStationInfo;
+import com.example.rsoi_course_work.gateway_service.model.user.UserInfo;
 
 import java.util.Objects;
 import java.util.UUID;
 
-public class RentalInfo {
+public class CreateRentalResponse {
     private UUID rental_uid;
     private UserInfo user;
     private LocatedScooterInfo located_scooter;
@@ -14,22 +19,10 @@ public class RentalInfo {
     private String date_to;
     private RentalStatus status;
 
-    public RentalInfo() {
+    public CreateRentalResponse() {
     }
 
-    public RentalInfo(Rental rental) {
-        this.rental_uid = rental.getRental_uid();
-        this.user = null;
-        this.located_scooter = null;
-        this.payment = null;
-        this.takenFromRentalStation = null;
-        this.returnToRentalStation = null;
-        this.date_from = rental.getDate_from_string();
-        this.date_to = rental.getDate_to_string();
-        this.status = rental.getStatus();
-    }
-
-    public RentalInfo(UUID rental_uid, UserInfo user, LocatedScooterInfo located_scooter, PaymentInfo payment, RentalStationInfo takenFromRentalStation, RentalStationInfo returnToRentalStation, String date_from, String date_to, RentalStatus status) {
+    public CreateRentalResponse(UUID rental_uid, UserInfo user, LocatedScooterInfo located_scooter, PaymentInfo payment, RentalStationInfo takenFromRentalStation, RentalStationInfo returnToRentalStation, String date_from, String date_to, RentalStatus status) {
         this.rental_uid = rental_uid;
         this.user = user;
         this.located_scooter = located_scooter;
@@ -118,7 +111,7 @@ public class RentalInfo {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        RentalInfo that = (RentalInfo) o;
+        CreateRentalResponse that = (CreateRentalResponse) o;
 
         if (!Objects.equals(rental_uid, that.rental_uid)) return false;
         if (!Objects.equals(user, that.user)) return false;

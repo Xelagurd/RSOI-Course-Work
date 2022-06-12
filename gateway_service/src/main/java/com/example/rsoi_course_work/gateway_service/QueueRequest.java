@@ -9,6 +9,7 @@ public class QueueRequest {
     private UUID paymentUid = null;
     private UUID locatedScooterUid = null;
     private Boolean availability = null;
+    private UUID rentalStationUid = null;
 
     public QueueRequestType getQueueRequestType() {
         return queueRequestType;
@@ -28,6 +29,10 @@ public class QueueRequest {
 
     public UUID getLocatedScooterUid() {
         return locatedScooterUid;
+    }
+
+    public UUID getRentalStationUid() {
+        return rentalStationUid;
     }
 
     public boolean isAvailability() {
@@ -50,6 +55,18 @@ public class QueueRequest {
         this.queueRequestType = QueueRequestType.UPDATE_SCOOTER_RESERVE;
         this.locatedScooterUid = locatedScooterUid;
         this.availability = availability;
+    }
+
+    public void setUpdateLocatedScooterRentalStation(UUID locatedScooterUid, UUID rentalStationUid) {
+        this.queueRequestType = QueueRequestType.UPDATE_SCOOTER_RENTAL_STATION;
+        this.locatedScooterUid = locatedScooterUid;
+        this.rentalStationUid = rentalStationUid;
+    }
+
+    public void setUpdateLocatedScooterCurrentCharge(UUID locatedScooterUid, UUID rentalUid) {
+        this.queueRequestType = QueueRequestType.UPDATE_SCOOTER_CURRENT_CHARGE;
+        this.locatedScooterUid = locatedScooterUid;
+        this.rentalUid = rentalUid;
     }
 
     public void setCancelPayment(UUID paymentUid) {

@@ -12,4 +12,7 @@ import java.util.UUID;
 public interface ScooterRepository extends JpaRepository<Scooter, Long> {
     @Query("select c from Scooter c where c.scooter_uid = ?1")
     Optional<Scooter> findByScooter_uid(UUID scooter_uid);
+
+    @Query("delete from Scooter where scooter_uid = ?1")
+    Void deleteByScooter_uid(UUID scooter_uid);
 }

@@ -1,6 +1,12 @@
 package com.example.rsoi_course_work.gateway_service;
 
-import com.example.rsoi_course_work.gateway_service.model.*;
+import com.example.rsoi_course_work.gateway_service.model.located_scooter.CreateLocatedScooterRequest;
+import com.example.rsoi_course_work.gateway_service.model.located_scooter.PaginationResponse;
+import com.example.rsoi_course_work.gateway_service.model.rental.CreateRentalRequest;
+import com.example.rsoi_course_work.gateway_service.model.rental.RentalInfo;
+import com.example.rsoi_course_work.gateway_service.model.rental_station.CreateRentalStationRequest;
+import com.example.rsoi_course_work.gateway_service.model.scooter.CreateScooterRequest;
+import com.example.rsoi_course_work.gateway_service.model.user.UserInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +28,9 @@ public class GatewayController {
         return gatewayService.getCurrentUser(jwt);
     }
 
-    //TODO: админские права
     @PostMapping("/scooters")
-    public ResponseEntity<CreateScooterResponse> createScooter(@RequestHeader("Authorization") String jwt,
-                                                               @RequestBody CreateScooterRequest createScooterRequest) {
+    public ResponseEntity<HttpStatus> createScooter(@RequestHeader("Authorization") String jwt,
+                                                    @RequestBody CreateScooterRequest createScooterRequest) {
         return gatewayService.createScooter(jwt, createScooterRequest);
     }
 
@@ -36,8 +41,8 @@ public class GatewayController {
     }
 
     @PostMapping("/rental-stations")
-    public ResponseEntity<CreateRentalStationResponse> createRentalStation(@RequestHeader("Authorization") String jwt,
-                                                                           @RequestBody CreateRentalStationRequest createRentalStationRequest) {
+    public ResponseEntity<HttpStatus> createRentalStation(@RequestHeader("Authorization") String jwt,
+                                                          @RequestBody CreateRentalStationRequest createRentalStationRequest) {
         return gatewayService.createRentalStation(jwt, createRentalStationRequest);
     }
 
@@ -48,8 +53,8 @@ public class GatewayController {
     }
 
     @PostMapping("/located-scooters")
-    public ResponseEntity<CreateLocatedScooterResponse> createLocatedScooter(@RequestHeader("Authorization") String jwt,
-                                                                             @RequestBody CreateLocatedScooterRequest createLocatedScooterRequest) {
+    public ResponseEntity<HttpStatus> createLocatedScooter(@RequestHeader("Authorization") String jwt,
+                                                           @RequestBody CreateLocatedScooterRequest createLocatedScooterRequest) {
         return gatewayService.createLocatedScooter(jwt, createLocatedScooterRequest);
     }
 
@@ -59,7 +64,6 @@ public class GatewayController {
         return gatewayService.removeLocatedScooter(jwt, locatedScooterUid);
     }
 
-    //TODO: добавить сортировку
     @GetMapping("/located-scooters")
     public ResponseEntity<PaginationResponse> getLocatedScooters(@RequestHeader("Authorization") String jwt,
                                                                  @RequestParam(required = false) Integer page,
@@ -93,7 +97,7 @@ public class GatewayController {
 
     @PostMapping("/rentals")
     public ResponseEntity<RentalInfo> reserveUserScooterAndCreateRentalAndPayment(@RequestHeader("Authorization") String jwt,
-                                                                                            @RequestBody CreateRentalRequest createRentalRequest) {
+                                                                                  @RequestBody CreateRentalRequest createRentalRequest) {
         return gatewayService.reserveUserScooterAndCreateRentalAndPayment(jwt, createRentalRequest);
     }
 }

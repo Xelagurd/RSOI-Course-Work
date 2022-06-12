@@ -1,7 +1,8 @@
 package com.example.rsoi_course_work.rental_service;
 
 import com.example.rsoi_course_work.rental_service.exception.ErrorResponse;
-import com.example.rsoi_course_work.rental_service.model.PairOfLocatedScooterUidAndPaymentUid;
+import com.example.rsoi_course_work.rental_service.model.CanceledRentalResponse;
+import com.example.rsoi_course_work.rental_service.model.FinishedRentalResponse;
 import com.example.rsoi_course_work.rental_service.model.Rental;
 import com.example.rsoi_course_work.rental_service.model.RentalStatus;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,10 @@ public class RentalService {
         return new ResponseEntity<>(new ArrayList<>(rentalRepository.findByUser_uid(userUid)), HttpStatus.OK);
     }
 
+    public ResponseEntity<List<Rental>> getLocatedScooterRentals(UUID locatedScooterUid) {
+        return new ResponseEntity<>(new ArrayList<>(rentalRepository.findByLocated_scooter_uid(locatedScooterUid)), HttpStatus.OK);
+    }
+
     public ResponseEntity<Rental> getUserRental(UUID userUid, UUID rentalUid) {
         Rental rental = rentalRepository.findByUser_uidAndRental_uid(userUid, rentalUid)
                 .orElseThrow(() -> new ErrorResponse("Not found user`s rental for UID"));
@@ -31,24 +36,26 @@ public class RentalService {
         return new ResponseEntity<>(rental, HttpStatus.OK);
     }
 
-    public ResponseEntity<PairOfLocatedScooterUidAndPaymentUid> cancelUserRental(UUID userUid, UUID rentalUid) {
+    public ResponseEntity<CanceledRentalResponse> cancelUserRental(UUID userUid, UUID rentalUid) {
         Rental rental = rentalRepository.findByUser_uidAndRental_uid(userUid, rentalUid)
                 .orElseThrow(() -> new ErrorResponse("Not found user`s rental for UID"));
 
         rental.setStatus(RentalStatus.CANCELED);
         rentalRepository.save(rental);
 
-        return new ResponseEntity<>(new PairOfLocatedScooterUidAndPaymentUid(rental.getLocated_scooter_uid(), rental.getPayment_uid()), HttpStatus.OK);
+        return new ResponseEntity<>(new CanceledRentalResponse(rental.getLocated_scooter_uid(),
+                rental.getPayment_uid()), HttpStatus.OK);
     }
 
-    public ResponseEntity<UUID> finishUserRental(UUID userUid, UUID rentalUid) {
+    public ResponseEntity<FinishedRentalResponse> finishUserRental(UUID userUid, UUID rentalUid) {
         Rental rental = rentalRepository.findByUser_uidAndRental_uid(userUid, rentalUid)
                 .orElseThrow(() -> new ErrorResponse("Not found user`s rental for UID"));
 
         rental.setStatus(RentalStatus.FINISHED);
         rentalRepository.save(rental);
 
-        return new ResponseEntity<>(rental.getLocated_scooter_uid(), HttpStatus.OK);
+        return new ResponseEntity<>(new FinishedRentalResponse(rental.getLocated_scooter_uid(),
+                rental.getReturn_to()), HttpStatus.OK);
     }
 
     public ResponseEntity<HttpStatus> createRental(Rental rental) {

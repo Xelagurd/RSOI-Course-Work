@@ -1,6 +1,7 @@
 package com.example.rsoi_course_work.rental_service;
 
-import com.example.rsoi_course_work.rental_service.model.PairOfLocatedScooterUidAndPaymentUid;
+import com.example.rsoi_course_work.rental_service.model.CanceledRentalResponse;
+import com.example.rsoi_course_work.rental_service.model.FinishedRentalResponse;
 import com.example.rsoi_course_work.rental_service.model.Rental;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,26 +19,31 @@ public class RentalController {
         this.rentalService = rentalService;
     }
 
-    @GetMapping("/rentals")
-    public ResponseEntity<List<Rental>> getUserRentals(@RequestParam UUID userUid) {
+    @GetMapping("/rentals/user/{userUid}")
+    public ResponseEntity<List<Rental>> getUserRentals(@PathVariable("userUid") UUID userUid) {
         return rentalService.getUserRentals(userUid);
     }
 
-    @GetMapping("/rentals/{rentalUid}")
-    public ResponseEntity<Rental> getUserRental(@RequestParam UUID userUid,
+    @GetMapping("/rentals/located-scooter/{locatedScooterUid}")
+    public ResponseEntity<List<Rental>> getLocatedScooterRentals(@PathVariable("locatedScooterUid") UUID locatedScooterUid) {
+        return rentalService.getLocatedScooterRentals(locatedScooterUid);
+    }
+
+    @GetMapping("/rentals/{rentalUid}/user/{userUid}")
+    public ResponseEntity<Rental> getUserRental(@PathVariable("userUid") UUID userUid,
                                                 @PathVariable("rentalUid") UUID rentalUid) {
         return rentalService.getUserRental(userUid, rentalUid);
     }
 
-    @DeleteMapping("/rentals/{rentalUid}")
-    public ResponseEntity<PairOfLocatedScooterUidAndPaymentUid> cancelUserRental(@RequestParam UUID userUid,
-                                                                                 @PathVariable("rentalUid") UUID rentalUid) {
+    @DeleteMapping("/rentals/{rentalUid}/user/{userUid}/cancel")
+    public ResponseEntity<CanceledRentalResponse> cancelUserRental(@PathVariable("userUid") UUID userUid,
+                                                                   @PathVariable("rentalUid") UUID rentalUid) {
         return rentalService.cancelUserRental(userUid, rentalUid);
     }
 
-    @DeleteMapping("/rentals/{rentalUid}/finish")
-    public ResponseEntity<UUID> finishUserRental(@RequestParam UUID userUid,
-                                                 @PathVariable("rentalUid") UUID rentalUid) {
+    @DeleteMapping("/rentals/{rentalUid}/user/{userUid}/finish")
+    public ResponseEntity<FinishedRentalResponse> finishUserRental(@PathVariable("userUid") UUID userUid,
+                                                                   @PathVariable("rentalUid") UUID rentalUid){
         return rentalService.finishUserRental(userUid, rentalUid);
     }
 

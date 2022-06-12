@@ -1,25 +1,25 @@
-package com.example.rsoi_course_work.gateway_service.model;
+package com.example.rsoi_course_work.rental_service.model;
 
 import java.util.Objects;
 import java.util.UUID;
 
-public class PairOfLocatedScooterUidAndPaymentUid {
+public class CanceledRentalResponse {
     private UUID locatedScooterUid;
     private UUID paymentUid;
 
-    public PairOfLocatedScooterUidAndPaymentUid() {
+    public CanceledRentalResponse() {
     }
 
-    public PairOfLocatedScooterUidAndPaymentUid(UUID locatedScooterUid, UUID paymentUid) {
+    public CanceledRentalResponse(UUID locatedScooterUid, UUID paymentUid) {
         this.locatedScooterUid = locatedScooterUid;
         this.paymentUid = paymentUid;
     }
 
-    public UUID getLocatedScooterUid() {
+    public UUID getScooterUid() {
         return locatedScooterUid;
     }
 
-    public void setLocatedScooterUid(UUID locatedScooterUid) {
+    public void setScooterUid(UUID locatedScooterUid) {
         this.locatedScooterUid = locatedScooterUid;
     }
 
@@ -34,9 +34,9 @@ public class PairOfLocatedScooterUidAndPaymentUid {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof PairOfLocatedScooterUidAndPaymentUid)) return false;
+        if (!(o instanceof CanceledRentalResponse)) return false;
 
-        PairOfLocatedScooterUidAndPaymentUid that = (PairOfLocatedScooterUidAndPaymentUid) o;
+        CanceledRentalResponse that = (CanceledRentalResponse) o;
 
         if (!Objects.equals(locatedScooterUid, that.locatedScooterUid)) return false;
         return Objects.equals(paymentUid, that.paymentUid);
@@ -51,7 +51,7 @@ public class PairOfLocatedScooterUidAndPaymentUid {
 
     @Override
     public String toString() {
-        return "PairOfLocatedScooterUidAndPaymentUid{" +
+        return "CanceledRentalResponse{" +
                 "locatedScooterUid=" + locatedScooterUid +
                 ", paymentUid=" + paymentUid +
                 '}';

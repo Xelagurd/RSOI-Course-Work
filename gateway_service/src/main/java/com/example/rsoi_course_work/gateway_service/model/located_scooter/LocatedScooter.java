@@ -1,4 +1,4 @@
-package com.example.rsoi_course_work.gateway_service.model;
+package com.example.rsoi_course_work.gateway_service.model.located_scooter;
 
 import java.util.Objects;
 import java.util.UUID;

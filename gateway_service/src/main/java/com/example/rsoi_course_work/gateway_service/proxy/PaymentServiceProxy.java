@@ -1,6 +1,6 @@
 package com.example.rsoi_course_work.gateway_service.proxy;
 
-import com.example.rsoi_course_work.gateway_service.model.Payment;
+import com.example.rsoi_course_work.gateway_service.model.payment.Payment;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

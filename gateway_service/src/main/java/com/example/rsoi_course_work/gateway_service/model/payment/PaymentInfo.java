@@ -1,40 +1,26 @@
-package com.example.rsoi_course_work.gateway_service.model;
+package com.example.rsoi_course_work.gateway_service.model.payment;
 
 import java.util.Objects;
 import java.util.UUID;
 
-public class Payment {
-    private Long id;
+public class PaymentInfo {
     private UUID payment_uid;
     private Integer price;
     private PaymentStatus status;
 
-    public Payment() {
+    public PaymentInfo() {
     }
 
-    public Payment(Long id, UUID payment_uid, Integer price, PaymentStatus status) {
-        this.id = id;
+    public PaymentInfo(Payment payment) {
+        this.payment_uid = payment.getPayment_uid();
+        this.price = payment.getPrice();
+        this.status = payment.getStatus();
+    }
+
+    public PaymentInfo(UUID payment_uid, Integer price, PaymentStatus status) {
         this.payment_uid = payment_uid;
         this.price = price;
         this.status = status;
-    }
-
-    public Payment(UUID payment_uid, Integer price, PaymentStatus status) {
-        this.payment_uid = payment_uid;
-        this.price = price;
-        this.status = status;
-    }
-
-    public PaymentInfo getInfo() {
-        return new PaymentInfo(payment_uid, price, status);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public UUID getPayment_uid() {
@@ -66,18 +52,16 @@ public class Payment {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Payment payment = (Payment) o;
+        PaymentInfo that = (PaymentInfo) o;
 
-        if (!Objects.equals(id, payment.id)) return false;
-        if (!Objects.equals(payment_uid, payment.payment_uid)) return false;
-        if (!Objects.equals(price, payment.price)) return false;
-        return status == payment.status;
+        if (!Objects.equals(payment_uid, that.payment_uid)) return false;
+        if (!Objects.equals(price, that.price)) return false;
+        return status == that.status;
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (payment_uid != null ? payment_uid.hashCode() : 0);
+        int result = payment_uid != null ? payment_uid.hashCode() : 0;
         result = 31 * result + (price != null ? price.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
         return result;
@@ -85,9 +69,8 @@ public class Payment {
 
     @Override
     public String toString() {
-        return "Payment{" +
-                "id=" + id +
-                ", payment_uid=" + payment_uid +
+        return "PaymentInfo{" +
+                "payment_uid=" + payment_uid +
                 ", price=" + price +
                 ", status=" + status +
                 '}';

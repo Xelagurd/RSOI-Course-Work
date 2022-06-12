@@ -12,4 +12,7 @@ import java.util.UUID;
 public interface RentalStationRepository extends JpaRepository<RentalStation, Long> {
     @Query("select c from RentalStation c where c.rental_station_uid = ?1")
     Optional<RentalStation> findByRental_station_uid(UUID rental_station_uid);
+
+    @Query("delete from RentalStation where rental_station_uid = ?1")
+    Void deleteByRental_station_uid(UUID rental_station_uid);
 }

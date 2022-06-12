@@ -1,6 +1,6 @@
 package com.example.rsoi_course_work.gateway_service.proxy;
 
-import com.example.rsoi_course_work.gateway_service.model.User;
+import com.example.rsoi_course_work.gateway_service.model.user.User;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

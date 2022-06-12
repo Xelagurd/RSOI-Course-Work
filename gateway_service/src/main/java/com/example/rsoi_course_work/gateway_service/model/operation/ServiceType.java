@@ -1,4 +1,4 @@
-package com.example.rsoi_course_work.gateway_service.model;
+package com.example.rsoi_course_work.gateway_service.model.operation;
 
 public enum ServiceType {
     SESSION,

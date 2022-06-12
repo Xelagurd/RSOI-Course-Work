@@ -1,4 +1,4 @@
-package com.example.rsoi_course_work.gateway_service.model;
+package com.example.rsoi_course_work.gateway_service.model.scooter;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -9,27 +9,33 @@ public class Scooter {
     private String provider;
     private Integer max_speed;
     private Integer price;
+    private Integer charge_recovery;
+    private Integer charge_consumption;
 
     public Scooter() {
     }
 
-    public Scooter(Long id, UUID scooter_uid, String provider, Integer max_speed, Integer price) {
+    public Scooter(Long id, UUID scooter_uid, String provider, Integer max_speed, Integer price, Integer charge_recovery, Integer charge_consumption) {
         this.id = id;
         this.scooter_uid = scooter_uid;
         this.provider = provider;
         this.max_speed = max_speed;
         this.price = price;
+        this.charge_recovery = charge_recovery;
+        this.charge_consumption = charge_consumption;
     }
 
-    public Scooter(UUID scooter_uid, String provider, Integer max_speed, Integer price) {
+    public Scooter(UUID scooter_uid, String provider, Integer max_speed, Integer price, Integer charge_recovery, Integer charge_consumption) {
         this.scooter_uid = scooter_uid;
         this.provider = provider;
         this.max_speed = max_speed;
         this.price = price;
+        this.charge_recovery = charge_recovery;
+        this.charge_consumption = charge_consumption;
     }
 
     public ScooterInfo getInfo() {
-        return new ScooterInfo(scooter_uid, provider, max_speed, price);
+        return new ScooterInfo(scooter_uid, provider, max_speed, price, charge_recovery, charge_consumption);
     }
 
     public Long getId() {
@@ -72,6 +78,22 @@ public class Scooter {
         this.price = price;
     }
 
+    public Integer getCharge_recovery() {
+        return charge_recovery;
+    }
+
+    public void setCharge_recovery(Integer charge_recovery) {
+        this.charge_recovery = charge_recovery;
+    }
+
+    public Integer getCharge_consumption() {
+        return charge_consumption;
+    }
+
+    public void setCharge_consumption(Integer charge_consumption) {
+        this.charge_consumption = charge_consumption;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -83,7 +105,10 @@ public class Scooter {
         if (!Objects.equals(scooter_uid, scooter.scooter_uid)) return false;
         if (!Objects.equals(provider, scooter.provider)) return false;
         if (!Objects.equals(max_speed, scooter.max_speed)) return false;
-        return Objects.equals(price, scooter.price);
+        if (!Objects.equals(price, scooter.price)) return false;
+        if (!Objects.equals(charge_recovery, scooter.charge_recovery))
+            return false;
+        return Objects.equals(charge_consumption, scooter.charge_consumption);
     }
 
     @Override
@@ -93,6 +118,8 @@ public class Scooter {
         result = 31 * result + (provider != null ? provider.hashCode() : 0);
         result = 31 * result + (max_speed != null ? max_speed.hashCode() : 0);
         result = 31 * result + (price != null ? price.hashCode() : 0);
+        result = 31 * result + (charge_recovery != null ? charge_recovery.hashCode() : 0);
+        result = 31 * result + (charge_consumption != null ? charge_consumption.hashCode() : 0);
         return result;
     }
 
@@ -104,6 +131,8 @@ public class Scooter {
                 ", provider='" + provider + '\'' +
                 ", max_speed=" + max_speed +
                 ", price=" + price +
+                ", charge_recovery=" + charge_recovery +
+                ", charge_consumption=" + charge_consumption +
                 '}';
     }
 }

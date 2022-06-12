@@ -27,4 +27,15 @@ public class ScooterService {
     public ResponseEntity<List<Scooter>> getScooters() {
         return new ResponseEntity<>(scooterRepository.findAll(), HttpStatus.OK);
     }
+
+    public ResponseEntity<HttpStatus> createScooter(Scooter scooter) {
+        scooterRepository.save(new Scooter(scooter.getScooter_uid(), scooter.getProvider(),
+                scooter.getMax_speed(), scooter.getPrice(), scooter.getCharge_recovery(), scooter.getCharge_consumption()));
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    public ResponseEntity<HttpStatus> removeScooter(UUID scooterUid) {
+        scooterRepository.deleteByScooter_uid(scooterUid);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

@@ -7,8 +7,8 @@ import com.example.rsoi_course_work.station_service.model.RentalStation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -65,10 +65,55 @@ public class StationService {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    public ResponseEntity<HttpStatus> updateLocatedScooterRentalStation(UUID locatedScooterUid,
+                                                                        UUID rentalStationUid) {
+        LocatedScooter locatedScooter = locatedScooterRepository.findByLocatedScooter_uid(locatedScooterUid).orElseThrow(() ->
+                new ErrorResponse("Not found locatedScooter for UID"));
+
+        locatedScooter.setRental_station_uid(rentalStationUid);
+        locatedScooterRepository.save(locatedScooter);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public ResponseEntity<HttpStatus> updateLocatedScooterCurrentCharge(@PathVariable("locatedScooterUid") UUID locatedScooterUid,
+                                                                        @RequestParam Integer currentCharge) {
+        LocatedScooter locatedScooter = locatedScooterRepository.findByLocatedScooter_uid(locatedScooterUid).orElseThrow(() ->
+                new ErrorResponse("Not found locatedScooter for UID"));
+
+        locatedScooter.setCurrent_charge(currentCharge);
+        locatedScooterRepository.save(locatedScooter);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     public ResponseEntity<RentalStation> getRentalStation(UUID rentalStationUid) {
         RentalStation rentalStation = rentalStationRepository.findByRental_station_uid(rentalStationUid).orElseThrow(() ->
                 new ErrorResponse("Not found rental station for UID"));
 
         return new ResponseEntity<>(rentalStation, HttpStatus.OK);
+    }
+
+    public ResponseEntity<HttpStatus> createLocatedScooter(LocatedScooter locatedScooter) {
+        locatedScooterRepository.save(new LocatedScooter(locatedScooter.getLocated_scooter_uid(),
+                locatedScooter.getScooter_uid(), locatedScooter.getRental_station_uid(), locatedScooter.getRegistration_number(),
+                locatedScooter.getCurrent_charge(), locatedScooter.getAvailability()));
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    public ResponseEntity<HttpStatus> createRentalStation(RentalStation rentalStation) {
+        rentalStationRepository.save(new RentalStation(rentalStation.getRental_station_uid(),
+                rentalStation.getLocation()));
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    public ResponseEntity<HttpStatus> removeLocatedScooter(UUID locatedScooterUid) {
+        locatedScooterRepository.deleteByLocated_scooter_uid(locatedScooterUid);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    public ResponseEntity<HttpStatus> removeRentalStation(UUID rentalStationUid) {
+        rentalStationRepository.deleteByRental_station_uid(rentalStationUid);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

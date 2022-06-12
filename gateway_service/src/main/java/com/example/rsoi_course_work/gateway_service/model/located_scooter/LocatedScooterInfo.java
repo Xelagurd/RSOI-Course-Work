@@ -1,4 +1,7 @@
-package com.example.rsoi_course_work.gateway_service.model;
+package com.example.rsoi_course_work.gateway_service.model.located_scooter;
+
+import com.example.rsoi_course_work.gateway_service.model.rental_station.RentalStationInfo;
+import com.example.rsoi_course_work.gateway_service.model.scooter.ScooterInfo;
 
 import java.util.Objects;
 import java.util.UUID;

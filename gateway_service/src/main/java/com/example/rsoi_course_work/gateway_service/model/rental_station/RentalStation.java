@@ -1,23 +1,37 @@
-package com.example.rsoi_course_work.gateway_service.model;
+package com.example.rsoi_course_work.gateway_service.model.rental_station;
 
 import java.util.Objects;
 import java.util.UUID;
 
-public class RentalStationInfo {
+public class RentalStation {
+    private Long id;
     private UUID rental_station_uid;
     private String location;
 
-    public RentalStationInfo() {
+    public RentalStation() {
     }
 
-    public RentalStationInfo(RentalStation rentalStation) {
-        this.rental_station_uid = rentalStation.getRental_station_uid();
-        this.location = rentalStation.getLocation();
-    }
-
-    public RentalStationInfo(UUID rental_station_uid, String location) {
+    public RentalStation(Long id, UUID rental_station_uid, String location) {
+        this.id = id;
         this.rental_station_uid = rental_station_uid;
         this.location = location;
+    }
+
+    public RentalStation(UUID rental_station_uid, String location) {
+        this.rental_station_uid = rental_station_uid;
+        this.location = location;
+    }
+
+    public RentalStationInfo getInfo() {
+        return new RentalStationInfo(rental_station_uid, location);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public UUID getRental_station_uid() {
@@ -41,8 +55,9 @@ public class RentalStationInfo {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        RentalStationInfo that = (RentalStationInfo) o;
+        RentalStation that = (RentalStation) o;
 
+        if (!Objects.equals(id, that.id)) return false;
         if (!Objects.equals(rental_station_uid, that.rental_station_uid))
             return false;
         return Objects.equals(location, that.location);
@@ -50,15 +65,17 @@ public class RentalStationInfo {
 
     @Override
     public int hashCode() {
-        int result = rental_station_uid != null ? rental_station_uid.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (rental_station_uid != null ? rental_station_uid.hashCode() : 0);
         result = 31 * result + (location != null ? location.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "RentalStationInfo{" +
-                "rental_station_uid=" + rental_station_uid +
+        return "RentalStation{" +
+                "id=" + id +
+                ", rental_station_uid=" + rental_station_uid +
                 ", location='" + location + '\'' +
                 '}';
     }

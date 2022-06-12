@@ -1,11 +1,9 @@
 package com.example.rsoi_course_work.scooter_service;
 
 import com.example.rsoi_course_work.scooter_service.model.Scooter;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,5 +25,15 @@ public class ScooterController {
     @GetMapping("/scooters")
     public ResponseEntity<List<Scooter>> getScooters() {
         return scooterService.getScooters();
+    }
+
+    @PostMapping("/scooters")
+    public ResponseEntity<HttpStatus> createScooter(@RequestBody Scooter scooter){
+        return scooterService.createScooter(scooter);
+    }
+
+    @DeleteMapping("/scooters/{scooterUid}")
+    public ResponseEntity<HttpStatus> removeScooter(@PathVariable("scooterUid") UUID scooterUid){
+        return scooterService.removeScooter(scooterUid);
     }
 }
