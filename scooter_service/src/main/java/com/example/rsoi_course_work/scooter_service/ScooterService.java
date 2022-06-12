@@ -35,7 +35,10 @@ public class ScooterService {
     }
 
     public ResponseEntity<HttpStatus> removeScooter(UUID scooterUid) {
-        scooterRepository.deleteByScooter_uid(scooterUid);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        Scooter scooter = scooterRepository.findByScooter_uid(scooterUid).orElseThrow(() ->
+                new ErrorResponse("Not found scooter for UID"));
+        scooterRepository.deleteById(scooter.getId());
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

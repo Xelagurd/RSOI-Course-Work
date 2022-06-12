@@ -11,8 +11,5 @@ import java.util.UUID;
 @Repository
 public interface LocatedScooterRepository extends JpaRepository<LocatedScooter, Long> {
     @Query("select c from LocatedScooter c where c.located_scooter_uid = ?1")
-    Optional<LocatedScooter> findByLocatedScooter_uid(UUID located_scooter_uid);
-
-    @Query("delete from LocatedScooter where located_scooter_uid = ?1")
-    Void deleteByLocated_scooter_uid(UUID located_scooter_uid);
+    Optional<LocatedScooter> findByLocated_scooter_uid(UUID located_scooter_uid);
 }

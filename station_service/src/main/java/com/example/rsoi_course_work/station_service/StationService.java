@@ -24,8 +24,8 @@ public class StationService {
     }
 
     public ResponseEntity<LocatedScooter> getLocatedScooter(UUID locatedScooterUid) {
-        LocatedScooter locatedScooter = locatedScooterRepository.findByLocatedScooter_uid(locatedScooterUid).orElseThrow(() ->
-                new ErrorResponse("Not found locatedScooter for UID"));
+        LocatedScooter locatedScooter = locatedScooterRepository.findByLocated_scooter_uid(locatedScooterUid).orElseThrow(() ->
+                new ErrorResponse("Not found located scooter for UID"));
 
         return new ResponseEntity<>(locatedScooter, HttpStatus.OK);
     }
@@ -56,8 +56,8 @@ public class StationService {
     }
 
     public ResponseEntity<HttpStatus> updateLocatedScooterReserve(UUID locatedScooterUid, Boolean availability) {
-        LocatedScooter locatedScooter = locatedScooterRepository.findByLocatedScooter_uid(locatedScooterUid).orElseThrow(() ->
-                new ErrorResponse("Not found locatedScooter for UID"));
+        LocatedScooter locatedScooter = locatedScooterRepository.findByLocated_scooter_uid(locatedScooterUid).orElseThrow(() ->
+                new ErrorResponse("Not found located scooter for UID"));
 
         locatedScooter.setAvailability(availability);
         locatedScooterRepository.save(locatedScooter);
@@ -67,8 +67,8 @@ public class StationService {
 
     public ResponseEntity<HttpStatus> updateLocatedScooterRentalStation(UUID locatedScooterUid,
                                                                         UUID rentalStationUid) {
-        LocatedScooter locatedScooter = locatedScooterRepository.findByLocatedScooter_uid(locatedScooterUid).orElseThrow(() ->
-                new ErrorResponse("Not found locatedScooter for UID"));
+        LocatedScooter locatedScooter = locatedScooterRepository.findByLocated_scooter_uid(locatedScooterUid).orElseThrow(() ->
+                new ErrorResponse("Not found located scooter for UID"));
 
         locatedScooter.setRental_station_uid(rentalStationUid);
         locatedScooterRepository.save(locatedScooter);
@@ -78,8 +78,8 @@ public class StationService {
 
     public ResponseEntity<HttpStatus> updateLocatedScooterCurrentCharge(@PathVariable("locatedScooterUid") UUID locatedScooterUid,
                                                                         @RequestParam Integer currentCharge) {
-        LocatedScooter locatedScooter = locatedScooterRepository.findByLocatedScooter_uid(locatedScooterUid).orElseThrow(() ->
-                new ErrorResponse("Not found locatedScooter for UID"));
+        LocatedScooter locatedScooter = locatedScooterRepository.findByLocated_scooter_uid(locatedScooterUid).orElseThrow(() ->
+                new ErrorResponse("Not found located scooter for UID"));
 
         locatedScooter.setCurrent_charge(currentCharge);
         locatedScooterRepository.save(locatedScooter);
@@ -108,12 +108,18 @@ public class StationService {
     }
 
     public ResponseEntity<HttpStatus> removeLocatedScooter(UUID locatedScooterUid) {
-        locatedScooterRepository.deleteByLocated_scooter_uid(locatedScooterUid);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        LocatedScooter locatedScooter = locatedScooterRepository.findByLocated_scooter_uid(locatedScooterUid).orElseThrow(() ->
+                new ErrorResponse("Not found located scooter for UID"));
+        locatedScooterRepository.deleteById(locatedScooter.getId());
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     public ResponseEntity<HttpStatus> removeRentalStation(UUID rentalStationUid) {
-        rentalStationRepository.deleteByRental_station_uid(rentalStationUid);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        RentalStation rentalStation = rentalStationRepository.findByRental_station_uid(rentalStationUid).orElseThrow(() ->
+                new ErrorResponse("Not found rental station for UID"));
+        rentalStationRepository.deleteById(rentalStation.getId());
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
