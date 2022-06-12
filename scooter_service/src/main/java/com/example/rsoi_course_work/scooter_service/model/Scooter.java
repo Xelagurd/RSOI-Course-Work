@@ -16,52 +16,29 @@ public class Scooter {
     private UUID scooter_uid;
 
     @Column(nullable = false, length = 80)
-    private String brand;
+    private String provider;
 
-    @Column(nullable = false, length = 80)
-    private String model;
-
-    @Column(nullable = false, length = 20)
-    private String registration_number;
-
-    private Integer power;
+    private Integer max_speed;
 
     @Column(nullable = false)
     private Integer price;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    private ScooterType type;
-
-    @Column(nullable = false)
-    private Boolean availability;
-
     public Scooter() {
     }
 
-    public Scooter(Long id, UUID scooter_uid, String brand, String model, String registration_number, Integer power, Integer price, ScooterType type, Boolean availability) {
-        super();
+    public Scooter(Long id, UUID scooter_uid, String provider, Integer max_speed, Integer price) {
         this.id = id;
         this.scooter_uid = scooter_uid;
-        this.brand = brand;
-        this.model = model;
-        this.registration_number = registration_number;
-        this.power = power;
+        this.provider = provider;
+        this.max_speed = max_speed;
         this.price = price;
-        this.type = type;
-        this.availability = availability;
     }
 
-    public Scooter(UUID scooter_uid, String brand, String model, String registration_number, Integer power, Integer price, ScooterType type, Boolean availability) {
-        super();
+    public Scooter(UUID scooter_uid, String provider, Integer max_speed, Integer price) {
         this.scooter_uid = scooter_uid;
-        this.brand = brand;
-        this.model = model;
-        this.registration_number = registration_number;
-        this.power = power;
+        this.provider = provider;
+        this.max_speed = max_speed;
         this.price = price;
-        this.type = type;
-        this.availability = availability;
     }
 
     public Long getId() {
@@ -80,36 +57,20 @@ public class Scooter {
         this.scooter_uid = scooter_uid;
     }
 
-    public String getBrand() {
-        return brand;
+    public String getProvider() {
+        return provider;
     }
 
-    public void setBrand(String brand) {
-        this.brand = brand;
+    public void setProvider(String provider) {
+        this.provider = provider;
     }
 
-    public String getModel() {
-        return model;
+    public Integer getMax_speed() {
+        return max_speed;
     }
 
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public String getRegistration_number() {
-        return registration_number;
-    }
-
-    public void setRegistration_number(String registration_number) {
-        this.registration_number = registration_number;
-    }
-
-    public Integer getPower() {
-        return power;
-    }
-
-    public void setPower(Integer power) {
-        this.power = power;
+    public void setMax_speed(Integer max_speed) {
+        this.max_speed = max_speed;
     }
 
     public Integer getPrice() {
@@ -120,51 +81,27 @@ public class Scooter {
         this.price = price;
     }
 
-    public ScooterType getType() {
-        return type;
-    }
-
-    public void setType(ScooterType type) {
-        this.type = type;
-    }
-
-    public Boolean getAvailability() {
-        return availability;
-    }
-
-    public void setAvailability(Boolean availability) {
-        this.availability = availability;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Scooter)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         Scooter scooter = (Scooter) o;
 
         if (!Objects.equals(id, scooter.id)) return false;
         if (!Objects.equals(scooter_uid, scooter.scooter_uid)) return false;
-        if (!Objects.equals(brand, scooter.brand)) return false;
-        if (!Objects.equals(model, scooter.model)) return false;
-        if (!Objects.equals(registration_number, scooter.registration_number)) return false;
-        if (!Objects.equals(power, scooter.power)) return false;
-        if (!Objects.equals(price, scooter.price)) return false;
-        if (type != scooter.type) return false;
-        return Objects.equals(availability, scooter.availability);
+        if (!Objects.equals(provider, scooter.provider)) return false;
+        if (!Objects.equals(max_speed, scooter.max_speed)) return false;
+        return Objects.equals(price, scooter.price);
     }
 
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (scooter_uid != null ? scooter_uid.hashCode() : 0);
-        result = 31 * result + (brand != null ? brand.hashCode() : 0);
-        result = 31 * result + (model != null ? model.hashCode() : 0);
-        result = 31 * result + (registration_number != null ? registration_number.hashCode() : 0);
-        result = 31 * result + (power != null ? power.hashCode() : 0);
+        result = 31 * result + (provider != null ? provider.hashCode() : 0);
+        result = 31 * result + (max_speed != null ? max_speed.hashCode() : 0);
         result = 31 * result + (price != null ? price.hashCode() : 0);
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (availability != null ? availability.hashCode() : 0);
         return result;
     }
 
@@ -173,13 +110,9 @@ public class Scooter {
         return "Scooter{" +
                 "id=" + id +
                 ", scooter_uid=" + scooter_uid +
-                ", brand='" + brand + '\'' +
-                ", model='" + model + '\'' +
-                ", registration_number='" + registration_number + '\'' +
-                ", power=" + power +
+                ", provider='" + provider + '\'' +
+                ", max_speed=" + max_speed +
                 ", price=" + price +
-                ", type=" + type +
-                ", availability=" + availability +
                 '}';
     }
 }

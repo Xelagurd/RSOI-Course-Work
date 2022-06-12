@@ -37,7 +37,7 @@ public class JwtUtils {
         return expiration.before(new Date());
     }
 
-    public Boolean validateJwtToken(String token) {
+    public Boolean verifyJwtToken(String token) {
         return !isTokenExpired(token);
     }
 }

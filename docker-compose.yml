@@ -79,7 +79,7 @@ services:
     build: ./statistic_service
     container_name: statistic-service
     ports:
-      - "8030:8030"
+      - "8060:8060"
     depends_on:
       - postgres
 

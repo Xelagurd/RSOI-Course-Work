@@ -12,32 +12,30 @@ public class Payment {
     @Column(columnDefinition = "serial")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private UUID payment_uid;
+
+    @Column(nullable = false)
+    private Integer price;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private PaymentStatus status;
 
-    @Column(nullable = false)
-    private Integer price;
-
     public Payment() {
     }
 
-    public Payment(Long id, UUID payment_uid, PaymentStatus status, Integer price) {
-        super();
+    public Payment(Long id, UUID payment_uid, Integer price, PaymentStatus status) {
         this.id = id;
         this.payment_uid = payment_uid;
-        this.status = status;
         this.price = price;
+        this.status = status;
     }
 
-    public Payment(UUID payment_uid, PaymentStatus status, Integer price) {
-        super();
+    public Payment(UUID payment_uid, Integer price, PaymentStatus status) {
         this.payment_uid = payment_uid;
-        this.status = status;
         this.price = price;
+        this.status = status;
     }
 
     public Long getId() {
@@ -56,14 +54,6 @@ public class Payment {
         this.payment_uid = payment_uid;
     }
 
-    public PaymentStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PaymentStatus status) {
-        this.status = status;
-    }
-
     public Integer getPrice() {
         return price;
     }
@@ -72,25 +62,33 @@ public class Payment {
         this.price = price;
     }
 
+    public PaymentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(PaymentStatus status) {
+        this.status = status;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Payment)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         Payment payment = (Payment) o;
 
         if (!Objects.equals(id, payment.id)) return false;
         if (!Objects.equals(payment_uid, payment.payment_uid)) return false;
-        if (status != payment.status) return false;
-        return Objects.equals(price, payment.price);
+        if (!Objects.equals(price, payment.price)) return false;
+        return status == payment.status;
     }
 
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (payment_uid != null ? payment_uid.hashCode() : 0);
-        result = 31 * result + (status != null ? status.hashCode() : 0);
         result = 31 * result + (price != null ? price.hashCode() : 0);
+        result = 31 * result + (status != null ? status.hashCode() : 0);
         return result;
     }
 
@@ -99,8 +97,8 @@ public class Payment {
         return "Payment{" +
                 "id=" + id +
                 ", payment_uid=" + payment_uid +
-                ", status=" + status +
                 ", price=" + price +
+                ", status=" + status +
                 '}';
     }
 }

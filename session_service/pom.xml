@@ -14,7 +14,7 @@
     <name>session_service</name>
     <description>session_service</description>
     <properties>
-        <start-class>com.example.rsoi_course_work.session_service.ScooterServiceApplication</start-class>
+        <start-class>com.example.rsoi_course_work.session_service.SessionServiceApplication</start-class>
         <java.version>11</java.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>

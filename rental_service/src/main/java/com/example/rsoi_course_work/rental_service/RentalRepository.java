@@ -11,9 +11,9 @@ import java.util.UUID;
 
 @Repository
 public interface RentalRepository extends JpaRepository<Rental, Long> {
-    @Query("select r from Rental r where r.username = ?1")
-    List<Rental> findByUsername(String username);
+    @Query("select r from Rental r where r.user_uid = ?1")
+    List<Rental> findByUser_uid(UUID userUid);
 
-    @Query("select r from Rental r where r.username = ?1 and r.rental_uid = ?2")
-    Optional<Rental> findByUsernameAndRental_uid(String username, UUID rental_uid);
+    @Query("select r from Rental r where r.user_uid = ?1 and r.rental_uid = ?2")
+    Optional<Rental> findByUser_uidAndRental_uid(UUID userUid, UUID rental_uid);
 }

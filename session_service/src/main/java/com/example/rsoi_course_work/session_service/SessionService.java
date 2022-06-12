@@ -24,7 +24,7 @@ public class SessionService {
         this.jwtUtils = jwtUtils;
     }
 
-    public ResponseEntity<SessionJwtResponse> getUserAuthentication(String login, String password) {
+    public ResponseEntity<SessionJwtResponse> userAuthorization(String login, String password) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
         Optional<User> userOptional = userRepository.findByLogin(login);
@@ -66,19 +66,19 @@ public class SessionService {
         return new ResponseEntity<>(sessionJwtResponse, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<Boolean> validateJwtToken(String jwt) {
+    public ResponseEntity<User> getCurrentUser(String jwt) {
+        User user = userRepository.findByLogin(jwtUtils.getLoginFromJwtToken(jwt)).orElseThrow(() ->
+                new ErrorResponse("Not found user for UID"));
+
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    public ResponseEntity<Boolean> verifyJwtToken(String jwt) {
         jwt = jwt.substring(7);
-        if (jwtUtils.validateJwtToken(jwt)) {
+        if (jwtUtils.verifyJwtToken(jwt)) {
             return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
         }
 
         return new ResponseEntity<>(Boolean.FALSE, HttpStatus.OK);
-    }
-
-    public ResponseEntity<User> getUser(UUID userUid) {
-        User user = userRepository.findByUser_uid(userUid).orElseThrow(() ->
-                new ErrorResponse("Not found user for UID"));
-
-        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 }

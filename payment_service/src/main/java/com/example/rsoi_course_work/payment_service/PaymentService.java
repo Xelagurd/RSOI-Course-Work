@@ -35,7 +35,7 @@ public class PaymentService {
     }
 
     public ResponseEntity<HttpStatus> createPayment(Payment payment) {
-        paymentRepository.save(new Payment(payment.getPayment_uid(), payment.getStatus(), payment.getPrice()));
+        paymentRepository.save(new Payment(payment.getPayment_uid(), payment.getPrice(), payment.getStatus()));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
