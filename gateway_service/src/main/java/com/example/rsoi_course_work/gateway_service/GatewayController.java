@@ -1,11 +1,13 @@
 package com.example.rsoi_course_work.gateway_service;
 
 import com.example.rsoi_course_work.gateway_service.model.located_scooter.CreateLocatedScooterRequest;
+import com.example.rsoi_course_work.gateway_service.model.located_scooter.LocatedScooterInfo;
 import com.example.rsoi_course_work.gateway_service.model.located_scooter.PaginationResponse;
 import com.example.rsoi_course_work.gateway_service.model.rental.CreateRentalRequest;
 import com.example.rsoi_course_work.gateway_service.model.rental.RentalInfo;
 import com.example.rsoi_course_work.gateway_service.model.rental_station.CreateRentalStationRequest;
 import com.example.rsoi_course_work.gateway_service.model.scooter.CreateScooterRequest;
+import com.example.rsoi_course_work.gateway_service.model.statistic_operation.StatisticOperation;
 import com.example.rsoi_course_work.gateway_service.model.statistic_operation.StatisticOperationInfo;
 import com.example.rsoi_course_work.gateway_service.model.user.UserInfo;
 import org.springframework.http.HttpStatus;
@@ -29,9 +31,20 @@ public class GatewayController {
         return gatewayService.getCurrentUser(jwt);
     }
 
+    @GetMapping("/verify")
+    public ResponseEntity<Boolean> verifyJwtToken(@RequestHeader("Authorization") String jwt) {
+        return gatewayService.verifyJwtToken(jwt);
+    }
+
     @GetMapping("/statistic-operations")
     public ResponseEntity<List<StatisticOperationInfo>> getStatisticOperations(@RequestHeader("Authorization") String jwt) {
         return gatewayService.getStatisticOperations(jwt);
+    }
+
+    @PostMapping("/statistic-operations")
+    public ResponseEntity<HttpStatus> createStatisticOperation(@RequestHeader("Authorization") String jwt,
+                                                               @RequestBody StatisticOperation statisticOperation) {
+        return gatewayService.createStatisticOperation(jwt, statisticOperation);
     }
 
     @PostMapping("/scooters")
@@ -68,6 +81,12 @@ public class GatewayController {
     public ResponseEntity<HttpStatus> removeLocatedScooter(@RequestHeader("Authorization") String jwt,
                                                            @PathVariable("locatedScooterUid") UUID locatedScooterUid) {
         return gatewayService.removeLocatedScooter(jwt, locatedScooterUid);
+    }
+
+    @GetMapping("/located-scooters/{locatedScooterUid}")
+    public ResponseEntity<LocatedScooterInfo> getLocatedScooter(@RequestHeader("Authorization") String jwt,
+                                                                @PathVariable("locatedScooterUid") UUID locatedScooterUid) {
+        return gatewayService.getLocatedScooter(jwt, locatedScooterUid);
     }
 
     @GetMapping("/located-scooters")

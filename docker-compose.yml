@@ -32,6 +32,14 @@ services:
     depends_on:
       - postgres
 
+  front-service:
+    build: ./front
+    container_name: front-service
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+
   session-service:
     build: ./session_service
     container_name: session-service

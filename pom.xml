@@ -45,6 +45,7 @@
         <module>session_service</module>
         <module>station_service</module>
         <module>statistic_service</module>
+        <module>front</module>
     </modules>
 
     <build>

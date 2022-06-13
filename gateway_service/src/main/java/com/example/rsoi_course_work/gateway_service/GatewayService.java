@@ -74,6 +74,10 @@ public class GatewayService {
         return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
     }
 
+    public ResponseEntity<Boolean> verifyJwtToken(String jwt) {
+        return sessionServiceProxy.verifyJwtToken(jwt);
+    }
+
     public ResponseEntity<List<StatisticOperationInfo>> getStatisticOperations(String jwt) {
         ResponseEntity<UserInfo> userResponseEntity = getCurrentUser(jwt);
 
@@ -98,6 +102,18 @@ public class GatewayService {
             }
 
             return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+    }
+
+    public ResponseEntity<HttpStatus> createStatisticOperation(String jwt, StatisticOperation statisticOperation) {
+        ResponseEntity<UserInfo> userResponseEntity = getCurrentUser(jwt);
+
+        if (userResponseEntity.getStatusCode() == HttpStatus.OK) {
+            statisticOperationsQueue.putStatisticOperationInQueue(statisticOperation);
+
+            return new ResponseEntity<>(null, HttpStatus.CREATED);
         }
 
         return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
@@ -241,6 +257,91 @@ public class GatewayService {
             }
 
             return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+    }
+
+    public ResponseEntity<LocatedScooterInfo> getLocatedScooter(String jwt, UUID locatedScooterUid) {
+        ResponseEntity<UserInfo> userResponseEntity = getCurrentUser(jwt);
+
+        if (userResponseEntity.getStatusCode() == HttpStatus.OK) {
+            try {
+                statisticOperationsQueue.putStatisticOperationInQueue(new StatisticOperation(
+                        UUID.randomUUID(), ServiceType.STATION, StatisticOperationType.GET,
+                        new Date(), userResponseEntity.getBody().getUser_uid(), null, locatedScooterUid,
+                        null, null, null));
+                LocatedScooter locatedScooter = stationServiceProxy.getLocatedScooter(locatedScooterUid).getBody();
+
+                Scooter scooter;
+                try {
+                    statisticOperationsQueue.putStatisticOperationInQueue(new StatisticOperation(
+                            UUID.randomUUID(), ServiceType.SCOOTER, StatisticOperationType.GET,
+                            new Date(), userResponseEntity.getBody().getUser_uid(), locatedScooter.getScooter_uid(), null,
+                            null, null, null));
+                    scooter = scooterServiceProxy.getScooter(locatedScooter.getScooter_uid()).getBody();
+                } catch (FeignException e) {
+                    scooter = null;
+                }
+
+                RentalStation rental_station;
+                try {
+                    statisticOperationsQueue.putStatisticOperationInQueue(new StatisticOperation(
+                            UUID.randomUUID(), ServiceType.STATION, StatisticOperationType.GET,
+                            new Date(), userResponseEntity.getBody().getUser_uid(), null, null,
+                            locatedScooter.getRental_station_uid(), null, null));
+                    rental_station = stationServiceProxy.getRentalStation(locatedScooter.getRental_station_uid()).getBody();
+                } catch (FeignException e) {
+                    rental_station = null;
+                }
+
+                LocatedScooterInfo locatedScooterInfo = locatedScooter.getInfo();
+
+                if (scooter != null) {
+                    locatedScooterInfo.setScooter(scooter.getInfo());
+
+                    List<Rental> locatedScooterRentals;
+                    try {
+                        statisticOperationsQueue.putStatisticOperationInQueue(new StatisticOperation(
+                                UUID.randomUUID(), ServiceType.RENTAL, StatisticOperationType.GET_ALL,
+                                new Date(), userResponseEntity.getBody().getUser_uid(), null, locatedScooter.getLocated_scooter_uid(),
+                                null, null, null));
+                        locatedScooterRentals = rentalServiceProxy.getLocatedScooterRentals(locatedScooter.getLocated_scooter_uid()).getBody();
+                    } catch (FeignException e) {
+                        locatedScooterRentals = null;
+                    }
+
+                    if (locatedScooterRentals != null) {
+                        Date currentDate = new Date();
+                        Rental lastRental = null;
+                        for (Rental rentalTemp : locatedScooterRentals) {
+                            if (rentalTemp.getDate_to().before(currentDate) &&
+                                    (lastRental == null || lastRental.getDate_to().before(rentalTemp.getDate_to()))) {
+                                lastRental = rentalTemp;
+                            }
+                        }
+
+                        Integer currentCharge;
+                        if (lastRental == null) {
+                            currentCharge = 100;
+                        } else {
+                            currentCharge = locatedScooter.getCurrent_charge() + (int) (((int) TimeUnit.MINUTES.convert(currentDate.getTime() -
+                                    lastRental.getDate_to().getTime(), TimeUnit.MILLISECONDS)) * 0.1 * scooter.getCharge_recovery());
+                        }
+
+                        currentCharge = currentCharge > 100 ? 100 : currentCharge;
+
+                        locatedScooterInfo.setCurrent_charge(currentCharge);
+                    }
+                }
+
+                if (rental_station != null)
+                    locatedScooterInfo.setRental_station(rental_station.getInfo());
+
+                return new ResponseEntity<>(locatedScooterInfo, HttpStatus.OK);
+            } catch (FeignException e) {
+                throw new FeignRetriesException("Station Service unavailable");
+            }
         }
 
         return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
