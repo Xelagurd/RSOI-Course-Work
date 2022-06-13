@@ -11,12 +11,6 @@ public class PaymentInfo {
     public PaymentInfo() {
     }
 
-    public PaymentInfo(Payment payment) {
-        this.payment_uid = payment.getPayment_uid();
-        this.price = payment.getPrice();
-        this.status = payment.getStatus();
-    }
-
     public PaymentInfo(UUID payment_uid, Integer price, PaymentStatus status) {
         this.payment_uid = payment_uid;
         this.price = price;

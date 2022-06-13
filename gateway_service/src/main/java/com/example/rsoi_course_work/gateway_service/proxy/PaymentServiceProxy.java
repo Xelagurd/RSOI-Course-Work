@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@FeignClient(name = "payment-service", url = "https://payment-service-xelagurd.herokuapp.com/api/v1")
+@FeignClient(name = "payment-service", url = "http://localhost:8050/api/v1")
 public interface PaymentServiceProxy {
 
     @GetMapping("/payments/{paymentUid}")

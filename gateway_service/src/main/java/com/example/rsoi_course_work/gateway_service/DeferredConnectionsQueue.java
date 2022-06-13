@@ -20,16 +20,16 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class QueueService {
-    private static BlockingQueue<QueueRequest> eventQueue = null;
+public class DeferredConnectionsQueue {
+    private static BlockingQueue<DeferredConnectionRequest> eventQueue = null;
 
     private final ScooterServiceProxy scooterServiceProxy;
     private final StationServiceProxy stationServiceProxy;
     private final RentalServiceProxy rentalServiceProxy;
     private final PaymentServiceProxy paymentServiceProxy;
 
-    public QueueService(ScooterServiceProxy scouterServiceProxy, StationServiceProxy stationServiceProxy,
-                        RentalServiceProxy rentalServiceProxy, PaymentServiceProxy paymentServiceProxy) {
+    public DeferredConnectionsQueue(ScooterServiceProxy scouterServiceProxy, StationServiceProxy stationServiceProxy,
+                                    RentalServiceProxy rentalServiceProxy, PaymentServiceProxy paymentServiceProxy) {
         this.scooterServiceProxy = scouterServiceProxy;
         this.stationServiceProxy = stationServiceProxy;
         this.rentalServiceProxy = rentalServiceProxy;
@@ -44,10 +44,10 @@ public class QueueService {
         }
     }
 
-    public void putRequestInQueue(QueueRequest queueRequest) {
+    public void putRequestInQueue(DeferredConnectionRequest deferredConnectionRequest) {
         try {
             initialize();
-            eventQueue.put(queueRequest);
+            eventQueue.put(deferredConnectionRequest);
         } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
@@ -57,37 +57,37 @@ public class QueueService {
         @Override
         public void run() {
             while (true) {
-                QueueRequest queueRequest = null;
+                DeferredConnectionRequest deferredConnectionRequest = null;
                 try {
-                    Thread.sleep(10000);
-                    queueRequest = eventQueue.take();
-                    switch (queueRequest.getQueueRequestType()) {
+                    Thread.sleep(5000);
+                    deferredConnectionRequest = eventQueue.take();
+                    switch (deferredConnectionRequest.getQueueRequestType()) {
                         case CANCEL_USER_RENTAL:
                             ResponseEntity<CanceledRentalResponse> responseEntity = new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
                             try {
                                 responseEntity = rentalServiceProxy.
-                                        cancelUserRental(queueRequest.getUserUid(), queueRequest.getRentalUid());
+                                        cancelUserRental(deferredConnectionRequest.getUserUid(), deferredConnectionRequest.getRentalUid());
                             } catch (FeignException e) {
-                                QueueService.this.putRequestInQueue(queueRequest);
+                                DeferredConnectionsQueue.this.putRequestInQueue(deferredConnectionRequest);
                             }
 
                             if (responseEntity.getStatusCode() != HttpStatus.NOT_FOUND) {
                                 try {
                                     stationServiceProxy.updateLocatedScooterReserve(responseEntity.getBody().getLocatedScooterUid(), true);
                                 } catch (FeignException e) {
-                                    QueueRequest newQueueRequest = new QueueRequest();
-                                    newQueueRequest.setUpdateLocatedScooterReserve(responseEntity.getBody().getLocatedScooterUid(), true);
+                                    DeferredConnectionRequest newDeferredConnectionRequest = new DeferredConnectionRequest();
+                                    newDeferredConnectionRequest.setUpdateLocatedScooterReserve(responseEntity.getBody().getLocatedScooterUid(), true);
 
-                                    QueueService.this.putRequestInQueue(newQueueRequest);
+                                    DeferredConnectionsQueue.this.putRequestInQueue(newDeferredConnectionRequest);
                                 }
 
                                 try {
                                     paymentServiceProxy.cancelPayment(responseEntity.getBody().getPaymentUid());
                                 } catch (FeignException e) {
-                                    QueueRequest newQueueRequest = new QueueRequest();
-                                    newQueueRequest.setCancelPayment(responseEntity.getBody().getPaymentUid());
+                                    DeferredConnectionRequest newDeferredConnectionRequest = new DeferredConnectionRequest();
+                                    newDeferredConnectionRequest.setCancelPayment(responseEntity.getBody().getPaymentUid());
 
-                                    QueueService.this.putRequestInQueue(newQueueRequest);
+                                    DeferredConnectionsQueue.this.putRequestInQueue(newDeferredConnectionRequest);
                                 }
                             }
                             break;
@@ -95,9 +95,9 @@ public class QueueService {
                             ResponseEntity<FinishedRentalResponse> responseEntity2 = new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
                             try {
                                 responseEntity2 = rentalServiceProxy.
-                                        finishUserRental(queueRequest.getUserUid(), queueRequest.getRentalUid());
+                                        finishUserRental(deferredConnectionRequest.getUserUid(), deferredConnectionRequest.getRentalUid());
                             } catch (FeignException e) {
-                                QueueService.this.putRequestInQueue(queueRequest);
+                                DeferredConnectionsQueue.this.putRequestInQueue(deferredConnectionRequest);
                             }
 
                             if (responseEntity2.getStatusCode() != HttpStatus.NOT_FOUND) {
@@ -105,22 +105,22 @@ public class QueueService {
                                     stationServiceProxy.updateLocatedScooterReserve(responseEntity2.getBody().getLocatedScooterUid(),
                                             true);
                                 } catch (FeignException e) {
-                                    QueueRequest newQueueRequest = new QueueRequest();
-                                    newQueueRequest.setUpdateLocatedScooterReserve(responseEntity2.getBody().getLocatedScooterUid(),
+                                    DeferredConnectionRequest newDeferredConnectionRequest = new DeferredConnectionRequest();
+                                    newDeferredConnectionRequest.setUpdateLocatedScooterReserve(responseEntity2.getBody().getLocatedScooterUid(),
                                             true);
 
-                                    QueueService.this.putRequestInQueue(newQueueRequest);
+                                    DeferredConnectionsQueue.this.putRequestInQueue(newDeferredConnectionRequest);
                                 }
 
                                 try {
                                     stationServiceProxy.updateLocatedScooterRentalStation(responseEntity2.getBody().getLocatedScooterUid(),
                                             responseEntity2.getBody().getReturnToRentalStationUid());
                                 } catch (FeignException e) {
-                                    QueueRequest newQueueRequest = new QueueRequest();
-                                    newQueueRequest.setUpdateLocatedScooterRentalStation(responseEntity2.getBody().getLocatedScooterUid(),
+                                    DeferredConnectionRequest newDeferredConnectionRequest = new DeferredConnectionRequest();
+                                    newDeferredConnectionRequest.setUpdateLocatedScooterRentalStation(responseEntity2.getBody().getLocatedScooterUid(),
                                             responseEntity2.getBody().getReturnToRentalStationUid());
 
-                                    QueueService.this.putRequestInQueue(newQueueRequest);
+                                    DeferredConnectionsQueue.this.putRequestInQueue(newDeferredConnectionRequest);
                                 }
 
                                 try {
@@ -128,14 +128,14 @@ public class QueueService {
 
                                     Rental currentRental = null;
                                     for (Rental rental : locatedScooterRentals) {
-                                        if (rental.getRental_uid() == queueRequest.getRentalUid()) {
+                                        if (rental.getRental_uid() == deferredConnectionRequest.getRentalUid()) {
                                             currentRental = rental;
                                         }
                                     }
 
                                     Rental lastRental = null;
                                     for (Rental rental : locatedScooterRentals) {
-                                        if (rental.getRental_uid() != queueRequest.getRentalUid()) {
+                                        if (rental.getRental_uid() != deferredConnectionRequest.getRentalUid()) {
                                             if (rental.getDate_to().before(currentRental.getDate_from()) &&
                                                     (lastRental == null || lastRental.getDate_to().before(rental.getDate_to()))) {
                                                 lastRental = rental;
@@ -164,44 +164,44 @@ public class QueueService {
                                     stationServiceProxy.updateLocatedScooterCurrentCharge(responseEntity2.getBody().getLocatedScooterUid(),
                                             currentCharge);
                                 } catch (FeignException e) {
-                                    QueueRequest newQueueRequest = new QueueRequest();
-                                    newQueueRequest.setUpdateLocatedScooterCurrentCharge(responseEntity2.getBody().getLocatedScooterUid(),
-                                            queueRequest.getRentalUid());
+                                    DeferredConnectionRequest newDeferredConnectionRequest = new DeferredConnectionRequest();
+                                    newDeferredConnectionRequest.setUpdateLocatedScooterCurrentCharge(responseEntity2.getBody().getLocatedScooterUid(),
+                                            deferredConnectionRequest.getRentalUid());
 
-                                    QueueService.this.putRequestInQueue(newQueueRequest);
+                                    DeferredConnectionsQueue.this.putRequestInQueue(newDeferredConnectionRequest);
                                 }
                             }
                             break;
                         case UPDATE_SCOOTER_RESERVE:
                             try {
-                                stationServiceProxy.updateLocatedScooterReserve(queueRequest.getLocatedScooterUid(),
-                                        queueRequest.isAvailability());
+                                stationServiceProxy.updateLocatedScooterReserve(deferredConnectionRequest.getLocatedScooterUid(),
+                                        deferredConnectionRequest.isAvailability());
                             } catch (FeignException e) {
-                                QueueService.this.putRequestInQueue(queueRequest);
+                                DeferredConnectionsQueue.this.putRequestInQueue(deferredConnectionRequest);
                             }
                             break;
                         case UPDATE_SCOOTER_RENTAL_STATION:
                             try {
-                                stationServiceProxy.updateLocatedScooterRentalStation(queueRequest.getLocatedScooterUid(),
-                                        queueRequest.getRentalStationUid());
+                                stationServiceProxy.updateLocatedScooterRentalStation(deferredConnectionRequest.getLocatedScooterUid(),
+                                        deferredConnectionRequest.getRentalStationUid());
                             } catch (FeignException e) {
-                                QueueService.this.putRequestInQueue(queueRequest);
+                                DeferredConnectionsQueue.this.putRequestInQueue(deferredConnectionRequest);
                             }
                             break;
                         case UPDATE_SCOOTER_CURRENT_CHARGE:
                             try {
-                                List<Rental> locatedScooterRentals = rentalServiceProxy.getLocatedScooterRentals(queueRequest.getLocatedScooterUid()).getBody();
+                                List<Rental> locatedScooterRentals = rentalServiceProxy.getLocatedScooterRentals(deferredConnectionRequest.getLocatedScooterUid()).getBody();
 
                                 Rental currentRental = null;
                                 for (Rental rental : locatedScooterRentals) {
-                                    if (rental.getRental_uid() == queueRequest.getRentalUid()) {
+                                    if (rental.getRental_uid() == deferredConnectionRequest.getRentalUid()) {
                                         currentRental = rental;
                                     }
                                 }
 
                                 Rental lastRental = null;
                                 for (Rental rental : locatedScooterRentals) {
-                                    if (rental.getRental_uid() != queueRequest.getRentalUid()) {
+                                    if (rental.getRental_uid() != deferredConnectionRequest.getRentalUid()) {
                                         if (rental.getDate_to().before(currentRental.getDate_from()) &&
                                                 (lastRental == null || lastRental.getDate_to().before(rental.getDate_to()))) {
                                             lastRental = rental;
@@ -227,17 +227,17 @@ public class QueueService {
 
                                 currentCharge = currentCharge < 0 ? 0 : currentCharge;
 
-                                stationServiceProxy.updateLocatedScooterCurrentCharge(queueRequest.getLocatedScooterUid(),
+                                stationServiceProxy.updateLocatedScooterCurrentCharge(deferredConnectionRequest.getLocatedScooterUid(),
                                         currentCharge);
                             } catch (FeignException e) {
-                                QueueService.this.putRequestInQueue(queueRequest);
+                                DeferredConnectionsQueue.this.putRequestInQueue(deferredConnectionRequest);
                             }
                             break;
                         case CANCEL_PAYMENT:
                             try {
-                                paymentServiceProxy.cancelPayment(queueRequest.getPaymentUid());
+                                paymentServiceProxy.cancelPayment(deferredConnectionRequest.getPaymentUid());
                             } catch (FeignException e) {
-                                QueueService.this.putRequestInQueue(queueRequest);
+                                DeferredConnectionsQueue.this.putRequestInQueue(deferredConnectionRequest);
                             }
                             break;
                     }

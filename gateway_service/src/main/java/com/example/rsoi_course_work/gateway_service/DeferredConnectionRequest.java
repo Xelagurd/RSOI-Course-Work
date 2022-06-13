@@ -1,9 +1,11 @@
 package com.example.rsoi_course_work.gateway_service;
 
+import com.example.rsoi_course_work.gateway_service.model.statistic_operation.StatisticOperation;
+
 import java.util.UUID;
 
-public class QueueRequest {
-    private QueueRequestType queueRequestType = null;
+public class DeferredConnectionRequest {
+    private DeferredConnectionType deferredConnectionType = null;
     private UUID userUid = null;
     private UUID rentalUid = null;
     private UUID paymentUid = null;
@@ -11,8 +13,8 @@ public class QueueRequest {
     private Boolean availability = null;
     private UUID rentalStationUid = null;
 
-    public QueueRequestType getQueueRequestType() {
-        return queueRequestType;
+    public DeferredConnectionType getQueueRequestType() {
+        return deferredConnectionType;
     }
 
     public UUID getUserUid() {
@@ -40,37 +42,37 @@ public class QueueRequest {
     }
 
     public void setCancelUserRental(UUID userUid, UUID rentalUid) {
-        this.queueRequestType = QueueRequestType.CANCEL_USER_RENTAL;
+        this.deferredConnectionType = DeferredConnectionType.CANCEL_USER_RENTAL;
         this.userUid = userUid;
         this.rentalUid = rentalUid;
     }
 
     public void setFinishUserRental(UUID userUid, UUID rentalUid) {
-        this.queueRequestType = QueueRequestType.FINISH_USER_RENTAL;
+        this.deferredConnectionType = DeferredConnectionType.FINISH_USER_RENTAL;
         this.userUid = userUid;
         this.rentalUid = rentalUid;
     }
 
     public void setUpdateLocatedScooterReserve(UUID locatedScooterUid, Boolean availability) {
-        this.queueRequestType = QueueRequestType.UPDATE_SCOOTER_RESERVE;
+        this.deferredConnectionType = DeferredConnectionType.UPDATE_SCOOTER_RESERVE;
         this.locatedScooterUid = locatedScooterUid;
         this.availability = availability;
     }
 
     public void setUpdateLocatedScooterRentalStation(UUID locatedScooterUid, UUID rentalStationUid) {
-        this.queueRequestType = QueueRequestType.UPDATE_SCOOTER_RENTAL_STATION;
+        this.deferredConnectionType = DeferredConnectionType.UPDATE_SCOOTER_RENTAL_STATION;
         this.locatedScooterUid = locatedScooterUid;
         this.rentalStationUid = rentalStationUid;
     }
 
     public void setUpdateLocatedScooterCurrentCharge(UUID locatedScooterUid, UUID rentalUid) {
-        this.queueRequestType = QueueRequestType.UPDATE_SCOOTER_CURRENT_CHARGE;
+        this.deferredConnectionType = DeferredConnectionType.UPDATE_SCOOTER_CURRENT_CHARGE;
         this.locatedScooterUid = locatedScooterUid;
         this.rentalUid = rentalUid;
     }
 
     public void setCancelPayment(UUID paymentUid) {
-        this.queueRequestType = QueueRequestType.CANCEL_PAYMENT;
+        this.deferredConnectionType = DeferredConnectionType.CANCEL_PAYMENT;
         this.paymentUid = paymentUid;
     }
 }

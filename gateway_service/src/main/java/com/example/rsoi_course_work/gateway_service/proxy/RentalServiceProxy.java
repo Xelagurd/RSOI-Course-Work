@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-@FeignClient(name = "rental-service", url = "https://rental-service-xelagurd.herokuapp.com/api/v1")
+@FeignClient(name = "rental-service", url = "http://localhost:8040/api/v1")
 public interface RentalServiceProxy {
 
     @GetMapping("/rentals/user/{userUid}")

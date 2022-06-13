@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@FeignClient(name = "station-service", url = "https://station-service-xelagurd.herokuapp.com/api/v1")
+@FeignClient(name = "station-service", url = "http://localhost:8030/api/v1")
 public interface StationServiceProxy {
     @GetMapping("/located-scooters/{locatedScooterUid}")
     public ResponseEntity<LocatedScooter> getLocatedScooter(@PathVariable("locatedScooterUid") UUID locatedScooterUid);

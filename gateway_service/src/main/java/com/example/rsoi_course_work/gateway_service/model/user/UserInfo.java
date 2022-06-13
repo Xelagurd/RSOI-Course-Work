@@ -14,14 +14,6 @@ public class UserInfo {
     public UserInfo() {
     }
 
-    public UserInfo(User user) {
-        this.user_uid = user.getUser_uid();
-        this.name = user.getName();
-        this.surname = user.getSurname();
-        this.login = user.getLogin();
-        this.role = user.getRole();
-    }
-
     public UserInfo(UUID user_uid, String name, String surname, String login, UserRole role) {
         this.user_uid = user_uid;
         this.name = name;

@@ -22,18 +22,6 @@ public class RentalInfo {
     public RentalInfo() {
     }
 
-    public RentalInfo(Rental rental) {
-        this.rental_uid = rental.getRental_uid();
-        this.user = null;
-        this.located_scooter = null;
-        this.payment = null;
-        this.takenFromRentalStation = null;
-        this.returnToRentalStation = null;
-        this.date_from = rental.getDate_from_string();
-        this.date_to = rental.getDate_to_string();
-        this.status = rental.getStatus();
-    }
-
     public RentalInfo(UUID rental_uid, UserInfo user, LocatedScooterInfo located_scooter, PaymentInfo payment, RentalStationInfo takenFromRentalStation, RentalStationInfo returnToRentalStation, String date_from, String date_to, RentalStatus status) {
         this.rental_uid = rental_uid;
         this.user = user;

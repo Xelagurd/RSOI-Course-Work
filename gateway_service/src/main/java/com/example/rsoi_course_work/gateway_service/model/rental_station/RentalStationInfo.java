@@ -10,11 +10,6 @@ public class RentalStationInfo {
     public RentalStationInfo() {
     }
 
-    public RentalStationInfo(RentalStation rentalStation) {
-        this.rental_station_uid = rentalStation.getRental_station_uid();
-        this.location = rentalStation.getLocation();
-    }
-
     public RentalStationInfo(UUID rental_station_uid, String location) {
         this.rental_station_uid = rental_station_uid;
         this.location = location;

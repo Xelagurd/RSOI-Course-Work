@@ -17,15 +17,6 @@ public class LocatedScooterInfo {
     public LocatedScooterInfo() {
     }
 
-    public LocatedScooterInfo(LocatedScooter locatedScooter) {
-        this.located_scooter_uid = locatedScooter.getLocated_scooter_uid();
-        this.scooter = null;
-        this.rental_station = null;
-        this.registration_number = locatedScooter.getRegistration_number();
-        this.current_charge = locatedScooter.getCurrent_charge();
-        this.availability = locatedScooter.getAvailability();
-    }
-
     public LocatedScooterInfo(UUID located_scooter_uid, ScooterInfo scooter, RentalStationInfo rental_station, String registration_number, Integer current_charge, Boolean availability) {
         this.located_scooter_uid = located_scooter_uid;
         this.scooter = scooter;

@@ -6,6 +6,7 @@ import com.example.rsoi_course_work.gateway_service.model.rental.CreateRentalReq
 import com.example.rsoi_course_work.gateway_service.model.rental.RentalInfo;
 import com.example.rsoi_course_work.gateway_service.model.rental_station.CreateRentalStationRequest;
 import com.example.rsoi_course_work.gateway_service.model.scooter.CreateScooterRequest;
+import com.example.rsoi_course_work.gateway_service.model.statistic_operation.StatisticOperationInfo;
 import com.example.rsoi_course_work.gateway_service.model.user.UserInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,11 @@ public class GatewayController {
     @GetMapping("/user")
     public ResponseEntity<UserInfo> getCurrentUser(@RequestHeader("Authorization") String jwt) {
         return gatewayService.getCurrentUser(jwt);
+    }
+
+    @GetMapping("/statistic-operations")
+    public ResponseEntity<List<StatisticOperationInfo>> getStatisticOperations(@RequestHeader("Authorization") String jwt) {
+        return gatewayService.getStatisticOperations(jwt);
     }
 
     @PostMapping("/scooters")

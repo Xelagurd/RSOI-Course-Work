@@ -13,14 +13,6 @@ import java.util.Date;
 
 @RestControllerAdvice
 public class GatewayControllerExceptionHandler {
-
-/*    @ExceptionHandler(UnauthorizedException.class)
-    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
-    public ErrorMessage unauthorizedException(UnauthorizedException ex, WebRequest request) {
-        return new ErrorMessage(HttpStatus.UNAUTHORIZED.value(), new Date(), ex.getMessage(),
-                request.getDescription(true));
-    }*/
-
     @ExceptionHandler(ValidationException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMessage validationException(ValidationException ex, WebRequest request) {
