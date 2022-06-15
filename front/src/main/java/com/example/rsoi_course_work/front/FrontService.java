@@ -1,13 +1,14 @@
 package com.example.rsoi_course_work.front;
 
-import com.example.rsoi_course_work.front.exception.FeignRetriesException;
 import com.example.rsoi_course_work.front.model.located_scooter.CreateLocatedScooterRequest;
 import com.example.rsoi_course_work.front.model.located_scooter.LocatedScooterInfo;
 import com.example.rsoi_course_work.front.model.located_scooter.PaginationResponse;
 import com.example.rsoi_course_work.front.model.rental.CreateRentalRequest;
 import com.example.rsoi_course_work.front.model.rental.RentalInfo;
 import com.example.rsoi_course_work.front.model.rental_station.CreateRentalStationRequest;
+import com.example.rsoi_course_work.front.model.rental_station.RentalStationInfo;
 import com.example.rsoi_course_work.front.model.scooter.CreateScooterRequest;
+import com.example.rsoi_course_work.front.model.scooter.ScooterInfo;
 import com.example.rsoi_course_work.front.model.statistic_operation.ServiceType;
 import com.example.rsoi_course_work.front.model.statistic_operation.StatisticOperation;
 import com.example.rsoi_course_work.front.model.statistic_operation.StatisticOperationInfo;
@@ -62,11 +63,9 @@ public class FrontService {
                 myCookie.setMaxAge(60 * 60);
                 myCookie.setPath("/");
                 VaadinResponse.getCurrent().addCookie(myCookie);
-
-                return responseEntity;
             }
 
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+            return responseEntity;
         } catch (FeignException e) {
             return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
         }
@@ -76,26 +75,22 @@ public class FrontService {
         try {
             ResponseEntity<SessionJwtResponse> responseEntity = sessionServiceProxy.userRegistration(registrationRequest);
 
-            if (responseEntity.getStatusCode().equals(HttpStatus.CREATED)) {
-                SessionJwtResponse sessionJwtResponse = responseEntity.getBody();
-                Cookie myCookie = new Cookie("Authorization", sessionJwtResponse.getJwt());
-                myCookie.setMaxAge(60 * 60);
-                myCookie.setPath("/");
-                VaadinResponse.getCurrent().addCookie(myCookie);
+            SessionJwtResponse sessionJwtResponse = responseEntity.getBody();
+            Cookie myCookie = new Cookie("Authorization", sessionJwtResponse.getJwt());
+            myCookie.setMaxAge(60 * 60);
+            myCookie.setPath("/");
+            VaadinResponse.getCurrent().addCookie(myCookie);
 
-                try {
-                    gatewayServiceProxy.createStatisticOperation(getJWT(), new StatisticOperation(
-                            UUID.randomUUID(), ServiceType.SESSION, StatisticOperationType.CREATE,
-                            new Date(), sessionJwtResponse.getUser_uid(), null, null,
-                            null, null, null));
-
-                    return responseEntity;
-                } catch (FeignException e) {
-                    return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
-                }
+            try {
+                gatewayServiceProxy.createStatisticOperation(getJWT(), new StatisticOperation(
+                        UUID.randomUUID(), ServiceType.SESSION, StatisticOperationType.CREATE,
+                        new Date(), sessionJwtResponse.getUser_uid(), null, null,
+                        null, null, null));
+            } catch (FeignException e) {
+                //return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
             }
 
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return responseEntity;
         } catch (FeignException e) {
             return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
         }
@@ -105,7 +100,7 @@ public class FrontService {
         try {
             return gatewayServiceProxy.getCurrentUser(getJWT());
         } catch (FeignException e) {
-            throw new FeignRetriesException("Gateway Service unavailable");
+            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
@@ -121,25 +116,23 @@ public class FrontService {
         try {
             return gatewayServiceProxy.getStatisticOperations(getJWT());
         } catch (FeignException e) {
-            throw new FeignRetriesException("Gateway Service unavailable");
+            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
     public ResponseEntity<HttpStatus> createScooter(CreateScooterRequest createScooterRequest) {
         try {
             return gatewayServiceProxy.createScooter(getJWT(), createScooterRequest);
-        } catch (
-                FeignException e) {
-            throw new FeignRetriesException("Gateway Service unavailable");
+        } catch (FeignException e) {
+            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
     public ResponseEntity<HttpStatus> removeScooter(UUID scooterUid) {
         try {
             return gatewayServiceProxy.removeScooter(getJWT(), scooterUid);
-        } catch (
-                FeignException e) {
-            throw new FeignRetriesException("Gateway Service unavailable");
+        } catch (FeignException e) {
+            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
@@ -147,7 +140,7 @@ public class FrontService {
         try {
             return gatewayServiceProxy.createRentalStation(getJWT(), createRentalStationRequest);
         } catch (FeignException e) {
-            throw new FeignRetriesException("Gateway Service unavailable");
+            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
@@ -155,7 +148,7 @@ public class FrontService {
         try {
             return gatewayServiceProxy.removeRentalStation(getJWT(), rentalStationUid);
         } catch (FeignException e) {
-            throw new FeignRetriesException("Gateway Service unavailable");
+            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
@@ -163,7 +156,7 @@ public class FrontService {
         try {
             return gatewayServiceProxy.createLocatedScooter(getJWT(), createLocatedScooterRequest);
         } catch (FeignException e) {
-            throw new FeignRetriesException("Gateway Service unavailable");
+            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
@@ -171,7 +164,7 @@ public class FrontService {
         try {
             return gatewayServiceProxy.removeLocatedScooter(getJWT(), locatedScooterUid);
         } catch (FeignException e) {
-            throw new FeignRetriesException("Gateway Service unavailable");
+            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
@@ -179,7 +172,7 @@ public class FrontService {
         try {
             return gatewayServiceProxy.getLocatedScooter(getJWT(), locatedScooterUid);
         } catch (FeignException e) {
-            throw new FeignRetriesException("Gateway Service unavailable");
+            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
@@ -189,7 +182,15 @@ public class FrontService {
         try {
             return gatewayServiceProxy.getLocatedScooters(getJWT(), page, size, showAll);
         } catch (FeignException e) {
-            throw new FeignRetriesException("Gateway Service unavailable");
+            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
+        }
+    }
+
+    public ResponseEntity<List<LocatedScooterInfo>> getLocatedScooters() {
+        try {
+            return new ResponseEntity<>(getLocatedScooters(1, 1000000000, true).getBody().getItems(), HttpStatus.OK);
+        } catch (FeignException e) {
+            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
@@ -197,7 +198,23 @@ public class FrontService {
         try {
             return gatewayServiceProxy.getUserRentals(getJWT());
         } catch (FeignException e) {
-            throw new FeignRetriesException("Gateway Service unavailable");
+            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
+        }
+    }
+
+    public ResponseEntity<List<ScooterInfo>> getScooters() {
+        try {
+            return gatewayServiceProxy.getScooters(getJWT());
+        } catch (FeignException e) {
+            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
+        }
+    }
+
+    public ResponseEntity<List<RentalStationInfo>> getRentalStations() {
+        try {
+            return gatewayServiceProxy.getRentalStations(getJWT());
+        } catch (FeignException e) {
+            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
@@ -205,7 +222,7 @@ public class FrontService {
         try {
             return gatewayServiceProxy.getUserRental(getJWT(), rentalUid);
         } catch (FeignException e) {
-            throw new FeignRetriesException("Gateway Service unavailable");
+            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
@@ -213,7 +230,7 @@ public class FrontService {
         try {
             return gatewayServiceProxy.cancelUserRentalAndPaymentAndUnReserveScooter(getJWT(), rentalUid);
         } catch (FeignException e) {
-            throw new FeignRetriesException("Gateway Service unavailable");
+            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
@@ -221,7 +238,7 @@ public class FrontService {
         try {
             return gatewayServiceProxy.finishUserRentalAndUnReserveScooter(getJWT(), rentalUid);
         } catch (FeignException e) {
-            throw new FeignRetriesException("Gateway Service unavailable");
+            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
@@ -229,7 +246,7 @@ public class FrontService {
         try {
             return gatewayServiceProxy.reserveUserScooterAndCreateRentalAndPayment(getJWT(), createRentalRequest);
         } catch (FeignException e) {
-            throw new FeignRetriesException("Gateway Service unavailable");
+            return new ResponseEntity<>(null, HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 }

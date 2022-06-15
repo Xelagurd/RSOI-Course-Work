@@ -25,7 +25,7 @@ public class StatisticOperation {
     private StatisticOperationType statistic_operation_type;
 
     @Column(nullable = false)
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 
     @Column(nullable = false)

@@ -1,9 +1,9 @@
 package com.example.rsoi_course_work.front.model.rental;
 
-import com.example.rsoi_course_work.gateway_service.model.located_scooter.LocatedScooterInfo;
-import com.example.rsoi_course_work.gateway_service.model.payment.PaymentInfo;
-import com.example.rsoi_course_work.gateway_service.model.rental_station.RentalStationInfo;
-import com.example.rsoi_course_work.gateway_service.model.user.UserInfo;
+import com.example.rsoi_course_work.front.model.located_scooter.LocatedScooterInfo;
+import com.example.rsoi_course_work.front.model.payment.PaymentInfo;
+import com.example.rsoi_course_work.front.model.rental_station.RentalStationInfo;
+import com.example.rsoi_course_work.front.model.user.UserInfo;
 
 import java.util.Objects;
 import java.util.UUID;

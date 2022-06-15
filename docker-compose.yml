@@ -1,4 +1,4 @@
-version: "4"
+version: "3"
 services:
   postgres:
     image: library/postgres:14
@@ -16,7 +16,6 @@ services:
 
   registration-service:
     build: ./registration_service
-    #image: xelagurd/rsoi-lab2_registration-service:latest
     container_name: registration-service
     ports:
       - "8761:8761"
@@ -25,7 +24,6 @@ services:
 
   gateway-service:
     build: ./gateway_service
-    #image: xelagurd/rsoi-lab2_gateway-service:latest
     container_name: gateway-service
     ports:
       - "8080:8080"
@@ -50,7 +48,6 @@ services:
 
   scooter-service:
     build: ./scooter_service
-    #image: xelagurd/rsoi-lab2_scooter-service:latest
     container_name: scooter-service
     ports:
       - "8020:8020"
@@ -67,7 +64,6 @@ services:
 
   rental-service:
     build: ./rental_service
-    #image: xelagurd/rsoi-lab2_rental-service:latest
     container_name: rental-service
     ports:
       - "8040:8040"
@@ -76,7 +72,6 @@ services:
 
   payment-service:
     build: ./payment_service
-    #image: xelagurd/rsoi-lab2_payment-service:latest
     container_name: payment-service
     ports:
       - "8050:8050"

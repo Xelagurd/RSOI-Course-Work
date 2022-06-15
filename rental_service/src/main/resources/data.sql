@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS rentals.rentals
     payment_uid         uuid                     NOT NULL,
     taken_from          uuid                     NOT NULL,
     return_to           uuid                     NOT NULL,
-    date_from           TIMESTAMP WITH TIME ZONE NOT NULL,
-    date_to             TIMESTAMP WITH TIME ZONE NOT NULL,
+    date_from           TIMESTAMP                NOT NULL,
+    date_to             TIMESTAMP                NOT NULL,
     status              VARCHAR(20)              NOT NULL
         CHECK (status IN ('IN_PROGRESS', 'FINISHED', 'CANCELED'))
 );

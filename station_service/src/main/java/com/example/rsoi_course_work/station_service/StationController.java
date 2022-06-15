@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -46,6 +47,11 @@ public class StationController {
     public ResponseEntity<HttpStatus> updateLocatedScooterCurrentCharge(@PathVariable("locatedScooterUid") UUID locatedScooterUid,
                                                                         @RequestParam Integer currentCharge) {
         return stationService.updateLocatedScooterCurrentCharge(locatedScooterUid, currentCharge);
+    }
+
+    @GetMapping("/rental-stations")
+    public ResponseEntity<List<RentalStation>> getRentalStations() {
+        return stationService.getRentalStations();
     }
 
     @GetMapping("/rental-stations/{rentalStationUid}")

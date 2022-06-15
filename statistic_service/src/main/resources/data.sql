@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS statistic_operations.statistic_operations
         CHECK (service_type IN ('SESSION', 'SCOOTER', 'STATION', 'RENTAL', 'PAYMENT', 'STATISTIC')),
     statistic_operation_type VARCHAR(20)              NOT NULL
         CHECK (statistic_operation_type IN ('GET', 'GET_ALL', 'CREATE', 'UPDATE', 'REMOVE')),
-    date                     TIMESTAMP WITH TIME ZONE NOT NULL,
+    date                     TIMESTAMP                NOT NULL,
     user_uid                 uuid                     NOT NULL,
     scooter_uid              uuid,
     located_scooter_uid      uuid,

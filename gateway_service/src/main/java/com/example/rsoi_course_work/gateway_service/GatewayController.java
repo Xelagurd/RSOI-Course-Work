@@ -6,7 +6,9 @@ import com.example.rsoi_course_work.gateway_service.model.located_scooter.Pagina
 import com.example.rsoi_course_work.gateway_service.model.rental.CreateRentalRequest;
 import com.example.rsoi_course_work.gateway_service.model.rental.RentalInfo;
 import com.example.rsoi_course_work.gateway_service.model.rental_station.CreateRentalStationRequest;
+import com.example.rsoi_course_work.gateway_service.model.rental_station.RentalStationInfo;
 import com.example.rsoi_course_work.gateway_service.model.scooter.CreateScooterRequest;
+import com.example.rsoi_course_work.gateway_service.model.scooter.ScooterInfo;
 import com.example.rsoi_course_work.gateway_service.model.statistic_operation.StatisticOperation;
 import com.example.rsoi_course_work.gateway_service.model.statistic_operation.StatisticOperationInfo;
 import com.example.rsoi_course_work.gateway_service.model.user.UserInfo;
@@ -95,6 +97,16 @@ public class GatewayController {
                                                                  @RequestParam(required = false) Integer size,
                                                                  @RequestParam(required = false) Boolean showAll) {
         return gatewayService.getLocatedScooters(jwt, page, size, showAll);
+    }
+
+    @GetMapping("/scooters")
+    public ResponseEntity<List<ScooterInfo>> getScooters(@RequestHeader("Authorization") String jwt) {
+        return gatewayService.getScooters(jwt);
+    }
+
+    @GetMapping("/rental-stations")
+    public ResponseEntity<List<RentalStationInfo>> getRentalStations(@RequestHeader("Authorization") String jwt) {
+        return gatewayService.getRentalStations(jwt);
     }
 
     @GetMapping("/rentals")

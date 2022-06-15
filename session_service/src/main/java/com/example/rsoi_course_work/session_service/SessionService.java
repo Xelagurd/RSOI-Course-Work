@@ -38,10 +38,10 @@ public class SessionService {
 
                 return new ResponseEntity<>(sessionJwtResponse, HttpStatus.OK);
             } else {
-                throw new ErrorResponse("Not valid password for user");
+                return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
             }
         } else {
-            throw new ErrorResponse("Not found user for login");
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -67,7 +67,7 @@ public class SessionService {
     }
 
     public ResponseEntity<User> getCurrentUser(String jwt) {
-        User user = userRepository.findByLogin(jwtUtils.getLoginFromJwtToken(jwt)).orElseThrow(() ->
+        User user = userRepository.findByLogin(jwtUtils.getLoginFromJwtToken(jwt.substring(7))).orElseThrow(() ->
                 new ErrorResponse("Not found user for UID"));
 
         return new ResponseEntity<>(user, HttpStatus.OK);

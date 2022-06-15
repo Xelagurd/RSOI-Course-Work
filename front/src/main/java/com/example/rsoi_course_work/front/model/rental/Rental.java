@@ -46,7 +46,7 @@ public class Rental {
 
     public RentalInfo getInfo() {
         return new RentalInfo(rental_uid, null, null, null, null,
-                null, getDate_from_string(), getDate_to_string(), status);
+                null, date_from, date_to, status);
     }
 
     public static String getString(Date date_from) {

@@ -6,7 +6,9 @@ import com.example.rsoi_course_work.front.model.located_scooter.PaginationRespon
 import com.example.rsoi_course_work.front.model.rental.CreateRentalRequest;
 import com.example.rsoi_course_work.front.model.rental.RentalInfo;
 import com.example.rsoi_course_work.front.model.rental_station.CreateRentalStationRequest;
+import com.example.rsoi_course_work.front.model.rental_station.RentalStationInfo;
 import com.example.rsoi_course_work.front.model.scooter.CreateScooterRequest;
+import com.example.rsoi_course_work.front.model.scooter.ScooterInfo;
 import com.example.rsoi_course_work.front.model.statistic_operation.StatisticOperation;
 import com.example.rsoi_course_work.front.model.statistic_operation.StatisticOperationInfo;
 import com.example.rsoi_course_work.front.model.user.UserInfo;
@@ -69,6 +71,12 @@ public interface GatewayServiceProxy {
 
     @GetMapping("/rentals")
     public ResponseEntity<List<RentalInfo>> getUserRentals(@RequestHeader("Authorization") String jwt);
+
+    @GetMapping("/scooters")
+    public ResponseEntity<List<ScooterInfo>> getScooters(@RequestHeader("Authorization") String jwt);
+
+    @GetMapping("/rental-stations")
+    public ResponseEntity<List<RentalStationInfo>> getRentalStations(@RequestHeader("Authorization") String jwt);
 
     @GetMapping("/rentals/{rentalUid}")
     public ResponseEntity<RentalInfo> getUserRental(@RequestHeader("Authorization") String jwt,

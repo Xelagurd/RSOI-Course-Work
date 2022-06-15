@@ -5,6 +5,7 @@ import com.example.rsoi_course_work.gateway_service.model.payment.PaymentInfo;
 import com.example.rsoi_course_work.gateway_service.model.rental_station.RentalStationInfo;
 import com.example.rsoi_course_work.gateway_service.model.user.UserInfo;
 
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -15,14 +16,14 @@ public class RentalInfo {
     private PaymentInfo payment;
     private RentalStationInfo takenFromRentalStation;
     private RentalStationInfo returnToRentalStation;
-    private String date_from;
-    private String date_to;
+    private Date date_from;
+    private Date date_to;
     private RentalStatus status;
 
     public RentalInfo() {
     }
 
-    public RentalInfo(UUID rental_uid, UserInfo user, LocatedScooterInfo located_scooter, PaymentInfo payment, RentalStationInfo takenFromRentalStation, RentalStationInfo returnToRentalStation, String date_from, String date_to, RentalStatus status) {
+    public RentalInfo(UUID rental_uid, UserInfo user, LocatedScooterInfo located_scooter, PaymentInfo payment, RentalStationInfo takenFromRentalStation, RentalStationInfo returnToRentalStation, Date date_from, Date date_to, RentalStatus status) {
         this.rental_uid = rental_uid;
         this.user = user;
         this.located_scooter = located_scooter;
@@ -82,19 +83,19 @@ public class RentalInfo {
         this.returnToRentalStation = returnToRentalStation;
     }
 
-    public String getDate_from() {
+    public Date getDate_from() {
         return date_from;
     }
 
-    public void setDate_from(String date_from) {
+    public void setDate_from(Date date_from) {
         this.date_from = date_from;
     }
 
-    public String getDate_to() {
+    public Date getDate_to() {
         return date_to;
     }
 
-    public void setDate_to(String date_to) {
+    public void setDate_to(Date date_to) {
         this.date_to = date_to;
     }
 

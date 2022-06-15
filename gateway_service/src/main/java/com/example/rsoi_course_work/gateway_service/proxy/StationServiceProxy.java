@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @FeignClient(name = "station-service", url = "http://localhost:8030/api/v1")
@@ -31,6 +32,9 @@ public interface StationServiceProxy {
     @PatchMapping("/located-scooters/{locatedScooterUid}/current-charge")
     public ResponseEntity<HttpStatus> updateLocatedScooterCurrentCharge(@PathVariable("locatedScooterUid") UUID locatedScooterUid,
                                                                         @RequestParam Integer currentCharge);
+
+    @GetMapping("/rental-stations")
+    public ResponseEntity<List<RentalStation>> getRentalStations();
 
     @GetMapping("/rental-stations/{rentalStationUid}")
     public ResponseEntity<RentalStation> getRentalStation(@PathVariable("rentalStationUid") UUID rentalStationUid);

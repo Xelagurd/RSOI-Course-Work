@@ -1,7 +1,6 @@
 package com.example.rsoi_course_work.gateway_service;
 
 import com.example.rsoi_course_work.gateway_service.model.located_scooter.LocatedScooter;
-import com.example.rsoi_course_work.gateway_service.model.rental.CanceledRentalResponse;
 import com.example.rsoi_course_work.gateway_service.model.rental.FinishedRentalResponse;
 import com.example.rsoi_course_work.gateway_service.model.rental.Rental;
 import com.example.rsoi_course_work.gateway_service.model.scooter.Scooter;
@@ -63,7 +62,7 @@ public class DeferredConnectionsQueue {
                     deferredConnectionRequest = eventQueue.take();
                     switch (deferredConnectionRequest.getQueueRequestType()) {
                         case CANCEL_USER_RENTAL:
-                            ResponseEntity<CanceledRentalResponse> responseEntity = new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+                            ResponseEntity<Rental> responseEntity = new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
                             try {
                                 responseEntity = rentalServiceProxy.
                                         cancelUserRental(deferredConnectionRequest.getUserUid(), deferredConnectionRequest.getRentalUid());
@@ -73,19 +72,19 @@ public class DeferredConnectionsQueue {
 
                             if (responseEntity.getStatusCode() != HttpStatus.NOT_FOUND) {
                                 try {
-                                    stationServiceProxy.updateLocatedScooterReserve(responseEntity.getBody().getLocatedScooterUid(), true);
+                                    stationServiceProxy.updateLocatedScooterReserve(responseEntity.getBody().getLocated_scooter_uid(), Boolean.TRUE);
                                 } catch (FeignException e) {
                                     DeferredConnectionRequest newDeferredConnectionRequest = new DeferredConnectionRequest();
-                                    newDeferredConnectionRequest.setUpdateLocatedScooterReserve(responseEntity.getBody().getLocatedScooterUid(), true);
+                                    newDeferredConnectionRequest.setUpdateLocatedScooterReserve(responseEntity.getBody().getLocated_scooter_uid(), true);
 
                                     DeferredConnectionsQueue.this.putRequestInQueue(newDeferredConnectionRequest);
                                 }
 
                                 try {
-                                    paymentServiceProxy.cancelPayment(responseEntity.getBody().getPaymentUid());
+                                    paymentServiceProxy.cancelPayment(responseEntity.getBody().getPayment_uid());
                                 } catch (FeignException e) {
                                     DeferredConnectionRequest newDeferredConnectionRequest = new DeferredConnectionRequest();
-                                    newDeferredConnectionRequest.setCancelPayment(responseEntity.getBody().getPaymentUid());
+                                    newDeferredConnectionRequest.setCancelPayment(responseEntity.getBody().getPayment_uid());
 
                                     DeferredConnectionsQueue.this.putRequestInQueue(newDeferredConnectionRequest);
                                 }
@@ -102,8 +101,7 @@ public class DeferredConnectionsQueue {
 
                             if (responseEntity2.getStatusCode() != HttpStatus.NOT_FOUND) {
                                 try {
-                                    stationServiceProxy.updateLocatedScooterReserve(responseEntity2.getBody().getLocatedScooterUid(),
-                                            true);
+                                    stationServiceProxy.updateLocatedScooterReserve(responseEntity2.getBody().getLocatedScooterUid(), Boolean.TRUE);
                                 } catch (FeignException e) {
                                     DeferredConnectionRequest newDeferredConnectionRequest = new DeferredConnectionRequest();
                                     newDeferredConnectionRequest.setUpdateLocatedScooterReserve(responseEntity2.getBody().getLocatedScooterUid(),
@@ -174,8 +172,7 @@ public class DeferredConnectionsQueue {
                             break;
                         case UPDATE_SCOOTER_RESERVE:
                             try {
-                                stationServiceProxy.updateLocatedScooterReserve(deferredConnectionRequest.getLocatedScooterUid(),
-                                        deferredConnectionRequest.isAvailability());
+                                stationServiceProxy.updateLocatedScooterReserve(deferredConnectionRequest.getLocatedScooterUid(), deferredConnectionRequest.isAvailability());
                             } catch (FeignException e) {
                                 DeferredConnectionsQueue.this.putRequestInQueue(deferredConnectionRequest);
                             }

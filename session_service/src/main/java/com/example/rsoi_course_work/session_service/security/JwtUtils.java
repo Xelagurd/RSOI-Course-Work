@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.HashMap;
 
 @Component
 public class JwtUtils {
@@ -17,6 +18,7 @@ public class JwtUtils {
 
     public String generateJwtToken(String login) {
         return Jwts.builder()
+                .setClaims(new HashMap<>())
                 .setSubject(login)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))

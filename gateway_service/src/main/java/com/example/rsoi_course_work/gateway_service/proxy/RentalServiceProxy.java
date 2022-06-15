@@ -1,6 +1,5 @@
 package com.example.rsoi_course_work.gateway_service.proxy;
 
-import com.example.rsoi_course_work.gateway_service.model.rental.CanceledRentalResponse;
 import com.example.rsoi_course_work.gateway_service.model.rental.FinishedRentalResponse;
 import com.example.rsoi_course_work.gateway_service.model.rental.Rental;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -25,8 +24,8 @@ public interface RentalServiceProxy {
                                                 @PathVariable("rentalUid") UUID rentalUid);
 
     @DeleteMapping("/rentals/{rentalUid}/user/{userUid}/cancel")
-    public ResponseEntity<CanceledRentalResponse> cancelUserRental(@PathVariable("userUid") UUID userUid,
-                                                                   @PathVariable("rentalUid") UUID rentalUid);
+    public ResponseEntity<Rental> cancelUserRental(@PathVariable("userUid") UUID userUid,
+                                                   @PathVariable("rentalUid") UUID rentalUid);
 
     @DeleteMapping("/rentals/{rentalUid}/user/{userUid}/finish")
     public ResponseEntity<FinishedRentalResponse> finishUserRental(@PathVariable("userUid") UUID userUid,

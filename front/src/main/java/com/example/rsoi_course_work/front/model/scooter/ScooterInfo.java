@@ -100,13 +100,6 @@ public class ScooterInfo {
 
     @Override
     public String toString() {
-        return "ScooterInfo{" +
-                "scooter_uid=" + scooter_uid +
-                ", provider='" + provider + '\'' +
-                ", max_speed=" + max_speed +
-                ", price=" + price +
-                ", charge_recovery=" + charge_recovery +
-                ", charge_consumption=" + charge_consumption +
-                '}';
+        return provider + ", макс. скорость = " + max_speed + ", цена = " + price;
     }
 }

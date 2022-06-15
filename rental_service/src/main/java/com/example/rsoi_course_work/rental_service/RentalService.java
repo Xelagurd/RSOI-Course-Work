@@ -1,7 +1,6 @@
 package com.example.rsoi_course_work.rental_service;
 
 import com.example.rsoi_course_work.rental_service.exception.ErrorResponse;
-import com.example.rsoi_course_work.rental_service.model.CanceledRentalResponse;
 import com.example.rsoi_course_work.rental_service.model.FinishedRentalResponse;
 import com.example.rsoi_course_work.rental_service.model.Rental;
 import com.example.rsoi_course_work.rental_service.model.RentalStatus;
@@ -36,15 +35,15 @@ public class RentalService {
         return new ResponseEntity<>(rental, HttpStatus.OK);
     }
 
-    public ResponseEntity<CanceledRentalResponse> cancelUserRental(UUID userUid, UUID rentalUid) {
+    public ResponseEntity<Rental> cancelUserRental(UUID userUid, UUID rentalUid) {
         Rental rental = rentalRepository.findByUser_uidAndRental_uid(userUid, rentalUid)
                 .orElseThrow(() -> new ErrorResponse("Not found user`s rental for UID"));
 
         rental.setStatus(RentalStatus.CANCELED);
         rentalRepository.save(rental);
 
-        return new ResponseEntity<>(new CanceledRentalResponse(rental.getLocated_scooter_uid(),
-                rental.getPayment_uid()), HttpStatus.OK);
+        //CanceledRentalResponse canceledRentalResponse = new CanceledRentalResponse(rental.getLocated_scooter_uid(), rental.getPayment_uid());
+        return new ResponseEntity<>(rental, HttpStatus.OK);
     }
 
     public ResponseEntity<FinishedRentalResponse> finishUserRental(UUID userUid, UUID rentalUid) {

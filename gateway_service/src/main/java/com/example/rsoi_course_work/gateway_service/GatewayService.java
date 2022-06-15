@@ -8,8 +8,10 @@ import com.example.rsoi_course_work.gateway_service.model.payment.PaymentStatus;
 import com.example.rsoi_course_work.gateway_service.model.rental.*;
 import com.example.rsoi_course_work.gateway_service.model.rental_station.CreateRentalStationRequest;
 import com.example.rsoi_course_work.gateway_service.model.rental_station.RentalStation;
+import com.example.rsoi_course_work.gateway_service.model.rental_station.RentalStationInfo;
 import com.example.rsoi_course_work.gateway_service.model.scooter.CreateScooterRequest;
 import com.example.rsoi_course_work.gateway_service.model.scooter.Scooter;
+import com.example.rsoi_course_work.gateway_service.model.scooter.ScooterInfo;
 import com.example.rsoi_course_work.gateway_service.model.statistic_operation.ServiceType;
 import com.example.rsoi_course_work.gateway_service.model.statistic_operation.StatisticOperation;
 import com.example.rsoi_course_work.gateway_service.model.statistic_operation.StatisticOperationInfo;
@@ -111,7 +113,11 @@ public class GatewayService {
         ResponseEntity<UserInfo> userResponseEntity = getCurrentUser(jwt);
 
         if (userResponseEntity.getStatusCode() == HttpStatus.OK) {
-            statisticOperationsQueue.putStatisticOperationInQueue(statisticOperation);
+            try {
+                statisticServiceProxy.createStatisticOperation(statisticOperation);
+            } catch (FeignException e) {
+                statisticOperationsQueue.putStatisticOperationInQueue(statisticOperation);
+            }
 
             return new ResponseEntity<>(null, HttpStatus.CREATED);
         }
@@ -155,7 +161,38 @@ public class GatewayService {
                             UUID.randomUUID(), ServiceType.SCOOTER, StatisticOperationType.REMOVE,
                             new Date(), userResponseEntity.getBody().getUser_uid(), scooterUid, null,
                             null, null, null));
-                    return scooterServiceProxy.removeScooter(scooterUid);
+
+                    ResponseEntity<HttpStatus> responseEntity = scooterServiceProxy.removeScooter(scooterUid);
+
+                    try {
+                        statisticOperationsQueue.putStatisticOperationInQueue(new StatisticOperation(
+                                UUID.randomUUID(), ServiceType.STATION, StatisticOperationType.GET_ALL,
+                                new Date(), userResponseEntity.getBody().getUser_uid(), null, null,
+                                null, null, null));
+                        ResponseEntity<List<LocatedScooterInfo>> locatedScooters = getLocatedScooters(jwt);
+
+                        for (LocatedScooterInfo locatedScooterInfo : locatedScooters.getBody()) {
+
+                            statisticOperationsQueue.putStatisticOperationInQueue(new StatisticOperation(
+                                    UUID.randomUUID(), ServiceType.STATION, StatisticOperationType.GET,
+                                    new Date(), userResponseEntity.getBody().getUser_uid(), null, locatedScooterInfo.getLocated_scooter_uid(),
+                                    null, null, null));
+                            ResponseEntity<LocatedScooter> locatedScooter = stationServiceProxy.getLocatedScooter(locatedScooterInfo.getLocated_scooter_uid());
+
+                            if (locatedScooter.getBody().getScooter_uid().equals(scooterUid)) {
+
+                                statisticOperationsQueue.putStatisticOperationInQueue(new StatisticOperation(
+                                        UUID.randomUUID(), ServiceType.STATION, StatisticOperationType.REMOVE,
+                                        new Date(), userResponseEntity.getBody().getUser_uid(), null, locatedScooterInfo.getLocated_scooter_uid(),
+                                        null, null, null));
+                                stationServiceProxy.removeLocatedScooter(locatedScooterInfo.getLocated_scooter_uid());
+                            }
+                        }
+                    } catch (FeignException e) {
+                        throw new FeignRetriesException("Station Service unavailable");
+                    }
+
+                    return responseEntity;
                 } catch (FeignException e) {
                     throw new FeignRetriesException("Scooter Service unavailable");
                 }
@@ -165,6 +202,14 @@ public class GatewayService {
         }
 
         return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+    }
+
+    public ResponseEntity<List<LocatedScooterInfo>> getLocatedScooters(String jwt) {
+        try {
+            return new ResponseEntity<>(getLocatedScooters(jwt, 1, 1000000000, true).getBody().getItems(), HttpStatus.OK);
+        } catch (FeignException e) {
+            throw new FeignRetriesException("Station Service unavailable");
+        }
     }
 
     public ResponseEntity<HttpStatus> createRentalStation(String jwt, CreateRentalStationRequest createRentalStationRequest) {
@@ -439,6 +484,58 @@ public class GatewayService {
         return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
     }
 
+    public ResponseEntity<List<ScooterInfo>> getScooters(String jwt) {
+        ResponseEntity<UserInfo> userResponseEntity = getCurrentUser(jwt);
+
+        if (userResponseEntity.getStatusCode() == HttpStatus.OK) {
+            ResponseEntity<List<Scooter>> scooters;
+            try {
+                statisticOperationsQueue.putStatisticOperationInQueue(new StatisticOperation(
+                        UUID.randomUUID(), ServiceType.SCOOTER, StatisticOperationType.GET_ALL,
+                        new Date(), userResponseEntity.getBody().getUser_uid(), null, null,
+                        null, null, null));
+                scooters = scooterServiceProxy.getScooters();
+            } catch (FeignException e) {
+                throw new FeignRetriesException("Scooter Service unavailable");
+            }
+
+            List<ScooterInfo> scooterResponse = new ArrayList<>();
+            for (Scooter scooter : scooters.getBody()) {
+                scooterResponse.add(scooter.getInfo());
+            }
+
+            return new ResponseEntity<>(scooterResponse, scooters.getStatusCode());
+        }
+
+        return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+    }
+
+    public ResponseEntity<List<RentalStationInfo>> getRentalStations(String jwt) {
+        ResponseEntity<UserInfo> userResponseEntity = getCurrentUser(jwt);
+
+        if (userResponseEntity.getStatusCode() == HttpStatus.OK) {
+            ResponseEntity<List<RentalStation>> rentalStations;
+            try {
+                statisticOperationsQueue.putStatisticOperationInQueue(new StatisticOperation(
+                        UUID.randomUUID(), ServiceType.STATION, StatisticOperationType.GET_ALL,
+                        new Date(), userResponseEntity.getBody().getUser_uid(), null, null,
+                        null, null, null));
+                rentalStations = stationServiceProxy.getRentalStations();
+            } catch (FeignException e) {
+                throw new FeignRetriesException("Station Service unavailable");
+            }
+
+            List<RentalStationInfo> rentalStationResponse = new ArrayList<>();
+            for (RentalStation rentalStation : rentalStations.getBody()) {
+                rentalStationResponse.add(rentalStation.getInfo());
+            }
+
+            return new ResponseEntity<>(rentalStationResponse, rentalStations.getStatusCode());
+        }
+
+        return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+    }
+
     public ResponseEntity<List<RentalInfo>> getUserRentals(String jwt) {
         ResponseEntity<UserInfo> userResponseEntity = getCurrentUser(jwt);
 
@@ -454,7 +551,7 @@ public class GatewayService {
                 throw new FeignRetriesException("Rental Service unavailable");
             }
 
-            List<RentalInfo> rentalRespons = new ArrayList<>();
+            List<RentalInfo> rentalResponse = new ArrayList<>();
             for (Rental rental : rentals.getBody()) {
                 LocatedScooter locatedScooter;
                 try {
@@ -582,10 +679,10 @@ public class GatewayService {
                 if (return_to_rental_station != null)
                     rentalInfo.setReturnToRentalStation(return_to_rental_station.getInfo());
 
-                rentalRespons.add(rentalInfo);
+                rentalResponse.add(rentalInfo);
             }
 
-            return new ResponseEntity<>(rentalRespons, rentals.getStatusCode());
+            return new ResponseEntity<>(rentalResponse, rentals.getStatusCode());
         }
 
         return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
@@ -742,7 +839,7 @@ public class GatewayService {
         ResponseEntity<UserInfo> userResponseEntity = getCurrentUser(jwt);
 
         if (userResponseEntity.getStatusCode() == HttpStatus.OK) {
-            ResponseEntity<CanceledRentalResponse> responseEntity;
+            ResponseEntity<Rental> responseEntity;
             try {
                 statisticOperationsQueue.putStatisticOperationInQueue(new StatisticOperation(
                         UUID.randomUUID(), ServiceType.RENTAL, StatisticOperationType.UPDATE,
@@ -761,12 +858,12 @@ public class GatewayService {
                 try {
                     statisticOperationsQueue.putStatisticOperationInQueue(new StatisticOperation(
                             UUID.randomUUID(), ServiceType.STATION, StatisticOperationType.UPDATE,
-                            new Date(), userResponseEntity.getBody().getUser_uid(), null, responseEntity.getBody().getLocatedScooterUid(),
+                            new Date(), userResponseEntity.getBody().getUser_uid(), null, responseEntity.getBody().getLocated_scooter_uid(),
                             null, null, null));
-                    stationServiceProxy.updateLocatedScooterReserve(responseEntity.getBody().getLocatedScooterUid(), true);
+                    stationServiceProxy.updateLocatedScooterReserve(responseEntity.getBody().getLocated_scooter_uid(), Boolean.TRUE);
                 } catch (FeignException e) {
                     DeferredConnectionRequest newDeferredConnectionRequest = new DeferredConnectionRequest();
-                    newDeferredConnectionRequest.setUpdateLocatedScooterReserve(responseEntity.getBody().getLocatedScooterUid(), true);
+                    newDeferredConnectionRequest.setUpdateLocatedScooterReserve(responseEntity.getBody().getLocated_scooter_uid(), Boolean.TRUE);
 
                     deferredConnectionsQueue.putRequestInQueue(newDeferredConnectionRequest);
                 }
@@ -775,11 +872,11 @@ public class GatewayService {
                     statisticOperationsQueue.putStatisticOperationInQueue(new StatisticOperation(
                             UUID.randomUUID(), ServiceType.PAYMENT, StatisticOperationType.UPDATE,
                             new Date(), userResponseEntity.getBody().getUser_uid(), null, null,
-                            null, null, responseEntity.getBody().getPaymentUid()));
-                    paymentServiceProxy.cancelPayment(responseEntity.getBody().getPaymentUid());
+                            null, null, responseEntity.getBody().getPayment_uid()));
+                    paymentServiceProxy.cancelPayment(responseEntity.getBody().getPayment_uid());
                 } catch (FeignException e) {
                     DeferredConnectionRequest newDeferredConnectionRequest = new DeferredConnectionRequest();
-                    newDeferredConnectionRequest.setCancelPayment(responseEntity.getBody().getPaymentUid());
+                    newDeferredConnectionRequest.setCancelPayment(responseEntity.getBody().getPayment_uid());
 
                     deferredConnectionsQueue.putRequestInQueue(newDeferredConnectionRequest);
                 }
@@ -816,8 +913,7 @@ public class GatewayService {
                             UUID.randomUUID(), ServiceType.STATION, StatisticOperationType.UPDATE,
                             new Date(), userResponseEntity.getBody().getUser_uid(), null, responseEntity.getBody().getLocatedScooterUid(),
                             null, null, null));
-                    stationServiceProxy.updateLocatedScooterReserve(responseEntity.getBody().getLocatedScooterUid(),
-                            true);
+                    stationServiceProxy.updateLocatedScooterReserve(responseEntity.getBody().getLocatedScooterUid(), Boolean.TRUE);
                 } catch (FeignException e) {
                     DeferredConnectionRequest newDeferredConnectionRequest = new DeferredConnectionRequest();
                     newDeferredConnectionRequest.setUpdateLocatedScooterReserve(responseEntity.getBody().getLocatedScooterUid(),
@@ -850,14 +946,14 @@ public class GatewayService {
 
                     Rental currentRental = null;
                     for (Rental rental : locatedScooterRentals) {
-                        if (rental.getRental_uid() == rentalUid) {
+                        if (rental.getRental_uid().equals(rentalUid)) {
                             currentRental = rental;
                         }
                     }
 
                     Rental lastRental = null;
                     for (Rental rentalTemp : locatedScooterRentals) {
-                        if (rentalTemp.getRental_uid() != rentalUid) {
+                        if (!rentalTemp.getRental_uid().equals(rentalUid)) {
                             if (rentalTemp.getDate_to().before(currentRental.getDate_from()) &&
                                     (lastRental == null || lastRental.getDate_to().before(rentalTemp.getDate_to()))) {
                                 lastRental = rentalTemp;
@@ -944,7 +1040,7 @@ public class GatewayService {
 
             LocatedScooter locatedScooter = locatedScooterResponse.getBody();
             Scooter scooter = scooterResponse.getBody();
-            int price = ((int) TimeUnit.DAYS.convert(createRentalRequest.getDate_to().getTime() -
+            int price = ((int) TimeUnit.MINUTES.convert(createRentalRequest.getDate_to().getTime() -
                     createRentalRequest.getDate_from().getTime(), TimeUnit.MILLISECONDS)) * scooter.getPrice();
 
             UUID paymentUid = UUID.randomUUID();
@@ -954,7 +1050,7 @@ public class GatewayService {
                         UUID.randomUUID(), ServiceType.STATION, StatisticOperationType.UPDATE,
                         new Date(), userResponseEntity.getBody().getUser_uid(), null, createRentalRequest.getLocated_scooter_uid(),
                         null, null, null));
-                stationServiceProxy.updateLocatedScooterReserve(createRentalRequest.getLocated_scooter_uid(), false);
+                stationServiceProxy.updateLocatedScooterReserve(createRentalRequest.getLocated_scooter_uid(), Boolean.FALSE);
             } catch (FeignException e) {
                 throw new FeignRetriesException("Station Service unavailable");
             }
@@ -974,7 +1070,7 @@ public class GatewayService {
                         UUID.randomUUID(), ServiceType.STATION, StatisticOperationType.UPDATE,
                         new Date(), userResponseEntity.getBody().getUser_uid(), null, createRentalRequest.getLocated_scooter_uid(),
                         null, null, null));
-                stationServiceProxy.updateLocatedScooterReserve(createRentalRequest.getLocated_scooter_uid(), true);
+                stationServiceProxy.updateLocatedScooterReserve(createRentalRequest.getLocated_scooter_uid(), Boolean.TRUE);
                 throw new FeignRetriesException("Rental Service unavailable");
             }
 
@@ -996,7 +1092,7 @@ public class GatewayService {
                         UUID.randomUUID(), ServiceType.STATION, StatisticOperationType.UPDATE,
                         new Date(), userResponseEntity.getBody().getUser_uid(), null, createRentalRequest.getLocated_scooter_uid(),
                         null, null, null));
-                stationServiceProxy.updateLocatedScooterReserve(createRentalRequest.getLocated_scooter_uid(), true);
+                stationServiceProxy.updateLocatedScooterReserve(createRentalRequest.getLocated_scooter_uid(), Boolean.TRUE);
 
                 throw new FeignRetriesException("Payment Service unavailable");
             }

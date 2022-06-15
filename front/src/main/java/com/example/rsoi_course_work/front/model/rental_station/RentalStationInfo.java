@@ -52,9 +52,6 @@ public class RentalStationInfo {
 
     @Override
     public String toString() {
-        return "RentalStationInfo{" +
-                "rental_station_uid=" + rental_station_uid +
-                ", location='" + location + '\'' +
-                '}';
+        return location;
     }
 }

@@ -107,13 +107,14 @@ public class LocatedScooterInfo {
 
     @Override
     public String toString() {
-        return "LocatedScooterInfo{" +
-                "located_scooter_uid=" + located_scooter_uid +
-                ", scooter=" + scooter +
-                ", rental_station=" + rental_station +
-                ", registration_number='" + registration_number + '\'' +
-                ", current_charge=" + current_charge +
-                ", availability=" + availability +
-                '}';
+        if (scooter == null && rental_station == null) {
+            return "Самокат = null, местоположение = null, регистр. номер = " + registration_number;
+        } else if (scooter == null) {
+            return "Самокат = null, местоположение = " + rental_station + ", регистр. номер = " + registration_number;
+        } else if (rental_station == null) {
+            return scooter + ", местоположение = null, регистр. номер = " + registration_number;
+        } else {
+            return scooter + ", местоположение = " + rental_station + ", регистр. номер = " + registration_number;
+        }
     }
 }

@@ -32,11 +32,11 @@ public class Rental {
     private UUID return_to;
 
     @Column(nullable = false)
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date date_from;
 
     @Column(nullable = false)
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date date_to;
 
     @Enumerated(EnumType.STRING)

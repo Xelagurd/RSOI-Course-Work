@@ -37,7 +37,7 @@ public class DeferredConnectionRequest {
         return rentalStationUid;
     }
 
-    public boolean isAvailability() {
+    public Boolean isAvailability() {
         return availability;
     }
 

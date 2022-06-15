@@ -1,0 +1,147 @@
+name: rsoi-course-work project
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  build:
+    name: Autograding
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: Build gateway
+        run: mvn --batch-mode --update-snapshots verify -f gateway_service
+
+      - name: Build scooter
+        run: mvn --batch-mode --update-snapshots verify -f scooter_service
+
+      - name: Build front
+        run: mvn --batch-mode --update-snapshots verify -f front
+
+      - name: Build payment
+        run: mvn --batch-mode --update-snapshots verify -f payment_service
+
+      - name: Build station
+        run: mvn --batch-mode --update-snapshots verify -f station_service
+
+      - name: Build registration
+        run: mvn --batch-mode --update-snapshots verify -f registration_service
+
+      - name: Build rental
+        run: mvn --batch-mode --update-snapshots verify -f rental_service
+
+      - name: Build session
+        run: mvn --batch-mode --update-snapshots verify -f session_service
+
+      - name: Build statistic
+        run: mvn --batch-mode --update-snapshots verify -f statistic_service
+
+      - name: gateway image
+        uses: mr-smithers-excellent/docker-build-push@v5
+        with:
+          image: xelagurd/gateway_service
+          tags: latest
+          registry: docker.io
+          directory: gateway_service
+          dockerfile: gateway_service/Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: scooter image
+        uses: mr-smithers-excellent/docker-build-push@v5
+        with:
+          image: xelagurd/scooter_service
+          tags: latest
+          registry: docker.io
+          directory: scooter_service
+          dockerfile: scooter_service/Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: front image
+        uses: mr-smithers-excellent/docker-build-push@v5
+        with:
+          image: xelagurd/front
+          tags: latest
+          registry: docker.io
+          directory: front
+          dockerfile: front/Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: payment image
+        uses: mr-smithers-excellent/docker-build-push@v5
+        with:
+          image: xelagurd/payment_service
+          tags: latest
+          registry: docker.io
+          directory: payment_service
+          dockerfile: payment_service/Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: rental image
+        uses: mr-smithers-excellent/docker-build-push@v5
+        with:
+          image: xelagurd/rental_service
+          tags: latest
+          registry: docker.io
+          directory: rental_service
+          dockerfile: rental_service/Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: session image
+        uses: mr-smithers-excellent/docker-build-push@v5
+        with:
+          image: xelagurd/session_service
+          tags: latest
+          registry: docker.io
+          directory: session_service
+          dockerfile: session_service/Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: statistic image
+        uses: mr-smithers-excellent/docker-build-push@v5
+        with:
+          image: xelagurd/statistic_service
+          tags: latest
+          registry: docker.io
+          directory: statistic_service
+          dockerfile: statistic_service/Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: station image
+        uses: mr-smithers-excellent/docker-build-push@v5
+        with:
+          image: xelagurd/station_service
+          tags: latest
+          registry: docker.io
+          directory: station_service
+          dockerfile: station_service/Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: registration image
+        uses: mr-smithers-excellent/docker-build-push@v5
+        with:
+          image: xelagurd/registration_service
+          tags: latest
+          registry: docker.io
+          directory: registration_service
+          dockerfile: registration_service/Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
