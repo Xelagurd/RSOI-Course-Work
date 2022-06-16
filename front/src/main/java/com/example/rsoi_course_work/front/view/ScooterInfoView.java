@@ -119,7 +119,6 @@ public class ScooterInfoView extends VerticalLayout implements HasUrlParameter<S
                         ResponseEntity<HttpStatus> responseEntity = frontService.removeLocatedScooter(locatedScooter.getLocated_scooter_uid());
                         if (responseEntity.getStatusCode().equals(HttpStatus.OK)) {
                             Notification.show("Самокат на станции удален");
-                            UI.getCurrent().getPage().reload();
                             UI.getCurrent().navigate(SearchScootersView.class);
                         } else if (responseEntity.getStatusCode().equals(HttpStatus.SERVICE_UNAVAILABLE)) {
                             Notification.show("Сервис недоступен");
